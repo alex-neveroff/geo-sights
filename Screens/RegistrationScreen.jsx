@@ -39,7 +39,6 @@ const RegistrationScreen = () => {
 
   const handleRegister = () => {
     // Тут потім буде логіка переходу на потрібний екран
-    console.log("Регистрация:", username, password, email);
   };
 
   return (
@@ -140,7 +139,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     letterSpacing: 0.01,
     color: "#212121",
-    marginBottom: 33,
+    marginBottom: 32,
     marginTop: 92,
   },
   inputContainer: {

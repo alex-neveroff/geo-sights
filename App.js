@@ -1,7 +1,8 @@
 import { ImageBackground, StyleSheet, View } from "react-native";
-import RegistrationScreen from "./Screens/RegistrationScreen";
-import BackgroundImage from "./assets/images/background.jpg";
 import { useFonts } from "expo-font";
+import BackgroundImage from "./assets/images/background.jpg";
+import RegistrationScreen from "./Screens/RegistrationScreen";
+// import LoginScreen from "./Screens/LoginScreen";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -25,6 +26,7 @@ export default function App() {
         style={styles.background}
       >
         <RegistrationScreen />
+        {/* <LoginScreen /> */}
       </ImageBackground>
     </View>
   );
