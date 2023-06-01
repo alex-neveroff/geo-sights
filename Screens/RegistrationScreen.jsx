@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import AvatarEmpty from "../assets/images/avatar-blanc.jpg";
 import AddIcon from "../assets/images/add.png";
@@ -58,29 +59,37 @@ const RegistrationScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.avatarContainer}>
-        {avatar ? (
-          <Image
-            source={{ uri: avatar }}
-            resizeMode="cover"
-            style={styles.avatarImage}
-          />
-        ) : (
-          <Image
-            source={AvatarEmpty}
-            resizeMode="cover"
-            style={styles.avatarImage}
-          />
-        )}
-        <TouchableOpacity style={styles.addButton} onPress={handleAddPhoto}>
-          <Image source={AddIcon} />
-        </TouchableOpacity>
-      </View>
-      <Text style={styles.title}>Реєстрація</Text>
-      <KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
-      >
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={
+        isFocused === "inputName" || isFocused === "inputEmail"
+          ? -160
+          : isFocused === "inputPassword"
+          ? -225
+          : 0
+      }
+      style={styles.container}
+    >
+      <View style={styles.formContainer}>
+        <View style={styles.avatarContainer}>
+          {avatar ? (
+            <Image
+              source={{ uri: avatar }}
+              resizeMode="cover"
+              style={styles.avatarImage}
+            />
+          ) : (
+            <Image
+              source={AvatarEmpty}
+              resizeMode="cover"
+              style={styles.avatarImage}
+            />
+          )}
+          <TouchableOpacity style={styles.addButton} onPress={handleAddPhoto}>
+            <Image source={AddIcon} />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.title}>Реєстрація</Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={[
@@ -118,6 +127,7 @@ const RegistrationScreen = () => {
               onFocus={() => handleFocus("inputPassword")}
               onBlur={handleBlur}
             />
+
             <TouchableOpacity
               onPress={handleTogglePasswordVisibility}
               style={styles.showPasswordButton}
@@ -128,32 +138,32 @@ const RegistrationScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
-      <TouchableOpacity
-        style={styles.registrationButton}
-        onPress={handleRegister}
-      >
-        <Text style={styles.registrationButtonText}>Зареєстуватися</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.registrationLink}>Вже є акаунт? Увійти</Text>
-    </View>
+        <View>
+          <TouchableOpacity
+            style={styles.registrationButton}
+            onPress={handleRegister}
+          >
+            <Text style={styles.registrationButtonText}>Зареєстуватися</Text>
+          </TouchableOpacity>
+          <Text style={styles.registrationLink}>Вже є акаунт? Увійти</Text>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 549,
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    paddingHorizontal: 16,
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  formContainer: {
     paddingTop: 92,
     paddingBottom: 45,
+    paddingHorizontal: 16,
+    borderTopStartRadius: 25,
+    borderTopEndRadius: 25,
+    backgroundColor: "#FFFFFF",
   },
   avatarContainer: {
     position: "absolute",
@@ -234,6 +244,10 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: "#1B4371",
     textAlign: "center",
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "flex-end",
   },
 });
 
