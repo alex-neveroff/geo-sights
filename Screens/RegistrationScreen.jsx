@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  KeyboardAvoidingView,
 } from "react-native";
 import AvatarEmpty from "../assets/images/avatar-blanc.jpg";
 import AddIcon from "../assets/images/add.png";
@@ -16,6 +17,7 @@ const RegistrationScreen = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [avatar, setAvatar] = useState(null);
+  const [isFocused, setIsFocused] = useState(null);
 
   const handleUsernameChange = (text) => {
     setUsername(text);
@@ -37,8 +39,22 @@ const RegistrationScreen = () => {
     // Тут потім буде логіка додавання фото
   };
 
+  const handleFocus = (inputKey) => {
+    setIsFocused(inputKey);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(null);
+  };
+
   const handleRegister = () => {
     // Тут потім буде логіка переходу на потрібний екран
+    console.debug("Username: ", username);
+    console.debug("E-mail: ", email);
+    console.debug("Password: ", password);
+    setUsername("");
+    setEmail("");
+    setPassword("");
   };
 
   return (
@@ -62,43 +78,64 @@ const RegistrationScreen = () => {
         </TouchableOpacity>
       </View>
       <Text style={styles.title}>Реєстрація</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Логін"
-          onChangeText={handleUsernameChange}
-          value={username}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Адреса електронної пошти"
-          onChangeText={handleEmailChange}
-          value={email}
-        />
-        <View style={styles.passwordContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
+        <View style={styles.inputContainer}>
           <TextInput
-            style={styles.input}
-            placeholder="Пароль"
-            secureTextEntry={!showPassword}
-            onChangeText={handlePasswordChange}
-            value={password}
+            style={[
+              styles.input,
+              isFocused === "inputName" && styles.inputFocused,
+            ]}
+            placeholder="Логін"
+            onChangeText={handleUsernameChange}
+            value={username}
+            onFocus={() => handleFocus("inputName")}
+            onBlur={handleBlur}
           />
-          <TouchableOpacity
-            onPress={handleTogglePasswordVisibility}
-            style={styles.showPasswordButton}
-          >
-            <Text style={styles.showPasswordText}>
-              {showPassword ? "Приховати" : "Показати"}
-            </Text>
-          </TouchableOpacity>
+          <TextInput
+            style={[
+              styles.input,
+              isFocused === "inputEmail" && styles.inputFocused,
+            ]}
+            placeholder="Адреса електронної пошти"
+            onChangeText={handleEmailChange}
+            value={email}
+            onFocus={() => handleFocus("inputEmail")}
+            onBlur={handleBlur}
+          />
+
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={[
+                styles.input,
+                isFocused === "inputPassword" && styles.inputFocused,
+              ]}
+              placeholder="Пароль"
+              secureTextEntry={!showPassword}
+              onChangeText={handlePasswordChange}
+              value={password}
+              onFocus={() => handleFocus("inputPassword")}
+              onBlur={handleBlur}
+            />
+            <TouchableOpacity
+              onPress={handleTogglePasswordVisibility}
+              style={styles.showPasswordButton}
+            >
+              <Text style={styles.showPasswordText}>
+                {showPassword ? "Приховати" : "Показати"}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
       <TouchableOpacity
         style={styles.registrationButton}
         onPress={handleRegister}
       >
         <Text style={styles.registrationButtonText}>Зареєстуватися</Text>
       </TouchableOpacity>
+
       <Text style={styles.registrationLink}>Вже є акаунт? Увійти</Text>
     </View>
   );
@@ -158,7 +195,9 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: "#BDBDBD",
   },
-
+  inputFocused: {
+    borderColor: "#FF6C00",
+  },
   passwordContainer: {
     position: "relative",
   },

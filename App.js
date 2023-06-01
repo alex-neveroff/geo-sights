@@ -1,8 +1,14 @@
-import { ImageBackground, StyleSheet, View } from "react-native";
+import {
+  ImageBackground,
+  StyleSheet,
+  View,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import { useFonts } from "expo-font";
 import BackgroundImage from "./assets/images/background.jpg";
 import RegistrationScreen from "./Screens/RegistrationScreen";
-// import LoginScreen from "./Screens/LoginScreen";
+import LoginScreen from "./Screens/LoginScreen";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -19,16 +25,18 @@ export default function App() {
   }
 
   return (
-    <View>
-      <ImageBackground
-        source={BackgroundImage}
-        resizeMode="cover"
-        style={styles.background}
-      >
-        <RegistrationScreen />
-        {/* <LoginScreen /> */}
-      </ImageBackground>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View>
+        <ImageBackground
+          source={BackgroundImage}
+          resizeMode="cover"
+          style={styles.background}
+        >
+          <RegistrationScreen />
+          {/* <LoginScreen /> */}
+        </ImageBackground>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 

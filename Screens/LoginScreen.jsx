@@ -5,12 +5,15 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const handlePasswordChange = (text) => {
     setPassword(text);
@@ -24,38 +27,64 @@ const LoginScreen = () => {
     setShowPassword(!showPassword);
   };
 
+  const handleFocus = (inputKey) => {
+    setIsFocused(inputKey);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(null);
+  };
+
   const handleLogin = () => {
     // Тут потім буде логіка входу
+    console.debug("E-mail: ", email);
+    console.debug("Password: ", password);
+    setEmail("");
+    setPassword("");
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Увійти</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Адреса електронної пошти"
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-        />
-        <View style={styles.passwordContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
+        <View style={styles.inputContainer}>
           <TextInput
-            style={styles.input}
-            placeholder="Пароль"
-            secureTextEntry={!showPassword}
-            onChangeText={handlePasswordChange}
-            value={password}
+            style={[
+              styles.input,
+              isFocused === "inputEmail" && styles.inputFocused,
+            ]}
+            placeholder="Адреса електронної пошти"
+            onChangeText={handleEmailChange}
+            value={email}
+            onFocus={() => handleFocus("inputEmail")}
+            onBlur={handleBlur}
           />
-          <TouchableOpacity
-            onPress={handleTogglePasswordVisibility}
-            style={styles.showPasswordButton}
-          >
-            <Text style={styles.showPasswordText}>
-              {showPassword ? "Приховати" : "Показати"}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={[
+                styles.input,
+                isFocused === "inputPassword" && styles.inputFocused,
+              ]}
+              placeholder="Пароль"
+              secureTextEntry={!showPassword}
+              onChangeText={handlePasswordChange}
+              value={password}
+              onFocus={() => handleFocus("inputPassword")}
+              onBlur={handleBlur}
+            />
+            <TouchableOpacity
+              onPress={handleTogglePasswordVisibility}
+              style={styles.showPasswordButton}
+            >
+              <Text style={styles.showPasswordText}>
+                {showPassword ? "Приховати" : "Показати"}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Увійти</Text>
       </TouchableOpacity>
@@ -106,7 +135,9 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: "#BDBDBD",
   },
-
+  inputFocused: {
+    borderColor: "#FF6C00",
+  },
   passwordContainer: {
     position: "relative",
   },
