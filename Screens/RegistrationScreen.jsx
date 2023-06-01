@@ -152,6 +152,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     paddingHorizontal: 16,
+    paddingTop: 92,
+    paddingBottom: 45,
   },
   avatarContainer: {
     position: "absolute",
@@ -177,7 +179,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.01,
     color: "#212121",
     marginBottom: 32,
-    marginTop: 92,
   },
   inputContainer: {
     gap: 16,

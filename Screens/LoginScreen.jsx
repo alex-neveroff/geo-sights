@@ -107,6 +107,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     paddingHorizontal: 16,
+    paddingTop: 32,
+    paddingBottom: 144,
   },
 
   title: {
@@ -117,7 +119,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.01,
     color: "#212121",
     marginBottom: 32,
-    marginTop: 32,
   },
   inputContainer: {
     gap: 16,
