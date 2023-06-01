@@ -138,15 +138,13 @@ const RegistrationScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-        <View>
-          <TouchableOpacity
-            style={styles.registrationButton}
-            onPress={handleRegister}
-          >
-            <Text style={styles.registrationButtonText}>Зареєстуватися</Text>
-          </TouchableOpacity>
-          <Text style={styles.registrationLink}>Вже є акаунт? Увійти</Text>
-        </View>
+        <TouchableOpacity
+          style={styles.registrationButton}
+          onPress={handleRegister}
+        >
+          <Text style={styles.registrationButtonText}>Зареєстуватися</Text>
+        </TouchableOpacity>
+        <Text style={styles.registrationLink}>Вже є акаунт? Увійти</Text>
       </View>
     </KeyboardAvoidingView>
   );
@@ -244,10 +242,6 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: "#1B4371",
     textAlign: "center",
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "flex-end",
   },
 });
 
