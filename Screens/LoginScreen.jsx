@@ -44,11 +44,19 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Увійти</Text>
-      <KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
-      >
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={
+        isFocused === "inputEmail"
+          ? -300
+          : isFocused === "inputPassword"
+          ? -260
+          : 0
+      }
+      style={styles.container}
+    >
+      <View style={styles.formContainer}>
+        <Text style={styles.title}>Увійти</Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={[
@@ -84,31 +92,30 @@ const LoginScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Увійти</Text>
-      </TouchableOpacity>
-      <Text style={styles.loginLink}>
-        Немає акаунту?{" "}
-        <Text style={styles.loginLinkUnderline}>Зареєструватися</Text>
-      </Text>
-    </View>
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          <Text style={styles.loginButtonText}>Увійти</Text>
+        </TouchableOpacity>
+        <Text style={styles.loginLink}>
+          Немає акаунту?{" "}
+          <Text style={styles.loginLinkUnderline}>Зареєструватися</Text>
+        </Text>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 489,
-    backgroundColor: "#fff",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-    paddingHorizontal: 16,
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  formContainer: {
     paddingTop: 32,
     paddingBottom: 144,
+    paddingHorizontal: 16,
+    borderTopStartRadius: 25,
+    borderTopEndRadius: 25,
+    backgroundColor: "#FFFFFF",
   },
 
   title: {
