@@ -16,6 +16,7 @@ import BackgroundImage from "../assets/images/background.jpg";
 import AvatarEmpty from "../assets/images/avatar-blanc.jpg";
 import AddIcon from "../assets/images/add.png";
 import { useNavigation } from "@react-navigation/core";
+import * as ImagePicker from "expo-image-picker";
 
 const RegistrationScreen = () => {
   const [username, setUsername] = useState("");
@@ -42,8 +43,29 @@ const RegistrationScreen = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleAddPhoto = () => {
-    // Тут потім буде логіка додавання фото
+  const handleAddPhoto = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") {
+      console.log("Permission denied");
+      return;
+    }
+
+    const options = {
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    };
+
+    let result = await ImagePicker.launchImageLibraryAsync(options);
+
+    if (!result.canceled) {
+      const selectedAsset = result.assets[0];
+      const source = { uri: selectedAsset.uri };
+      setAvatar(source);
+      console.debug(avatar);
+    }
   };
 
   const handleFocus = (inputKey) => {
@@ -55,13 +77,15 @@ const RegistrationScreen = () => {
   };
 
   const handleRegister = () => {
-    // Тут потім буде логіка переходу на потрібний екран
-    console.debug("Username: ", username);
-    console.debug("E-mail: ", email);
-    console.debug("Password: ", password);
-    setUsername("");
-    setEmail("");
-    setPassword("");
+    // navigation.navigate("Home", {
+    //   screen: "PostsScreen",
+    //   params: {
+    //     email: email,
+    //   },
+    // });
+    navigation.navigate("Home", {
+      email: email,
+    });
   };
 
   return (
@@ -76,9 +100,9 @@ const RegistrationScreen = () => {
           style={styles.container}
           keyboardVerticalOffset={
             isFocused === "inputName" || isFocused === "inputEmail"
-              ? -60
+              ? -150
               : isFocused === "inputPassword"
-              ? -125
+              ? -215
               : 0
           }
         >
@@ -86,7 +110,7 @@ const RegistrationScreen = () => {
             <View style={styles.avatarContainer}>
               {avatar ? (
                 <Image
-                  source={{ uri: avatar }}
+                  source={avatar}
                   resizeMode="cover"
                   style={styles.avatarImage}
                 />

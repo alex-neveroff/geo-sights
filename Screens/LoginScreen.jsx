@@ -42,11 +42,11 @@ const LoginScreen = () => {
   };
 
   const handleLogin = () => {
-    // Тут потім буде логіка входу
-    console.debug("E-mail: ", email);
-    console.debug("Password: ", password);
-    setEmail("");
-    setPassword("");
+    navigation.navigate("Home", {
+      screen: "PostsScreen",
+      params: { email: email },
+    });
+    // navigation.navigate("Home", { email: email });
   };
 
   return (
@@ -59,7 +59,7 @@ const LoginScreen = () => {
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
           style={styles.container}
-          keyboardVerticalOffset={-130}
+          keyboardVerticalOffset={-255}
         >
           <View style={styles.formContainer}>
             <Text style={styles.title}>Увійти</Text>
