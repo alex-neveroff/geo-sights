@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  ImageBackground,
   View,
   TextInput,
   StyleSheet,
@@ -7,13 +8,18 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
+import BackgroundImage from "../assets/images/background.jpg";
+import { useNavigation } from "@react-navigation/core";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const navigation = useNavigation();
 
   const handlePasswordChange = (text) => {
     setPassword(text);
@@ -44,63 +50,76 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={
-        isFocused === "inputEmail"
-          ? -300
-          : isFocused === "inputPassword"
-          ? -260
-          : 0
-      }
-      style={styles.container}
+    <ImageBackground
+      source={BackgroundImage}
+      resizeMode="cover"
+      style={styles.background}
     >
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Увійти</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={[
-              styles.input,
-              isFocused === "inputEmail" && styles.inputFocused,
-            ]}
-            placeholder="Адреса електронної пошти"
-            onChangeText={handleEmailChange}
-            value={email}
-            onFocus={() => handleFocus("inputEmail")}
-            onBlur={handleBlur}
-          />
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={[
-                styles.input,
-                isFocused === "inputPassword" && styles.inputFocused,
-              ]}
-              placeholder="Пароль"
-              secureTextEntry={!showPassword}
-              onChangeText={handlePasswordChange}
-              value={password}
-              onFocus={() => handleFocus("inputPassword")}
-              onBlur={handleBlur}
-            />
-            <TouchableOpacity
-              onPress={handleTogglePasswordVisibility}
-              style={styles.showPasswordButton}
-            >
-              <Text style={styles.showPasswordText}>
-                {showPassword ? "Приховати" : "Показати"}
-              </Text>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={
+            isFocused === "inputEmail"
+              ? -300
+              : isFocused === "inputPassword"
+              ? -260
+              : 0
+          }
+          style={styles.container}
+        >
+          <View style={styles.formContainer}>
+            <Text style={styles.title}>Увійти</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={[
+                  styles.input,
+                  isFocused === "inputEmail" && styles.inputFocused,
+                ]}
+                placeholder="Адреса електронної пошти"
+                onChangeText={handleEmailChange}
+                value={email}
+                onFocus={() => handleFocus("inputEmail")}
+                onBlur={handleBlur}
+              />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={[
+                    styles.input,
+                    isFocused === "inputPassword" && styles.inputFocused,
+                  ]}
+                  placeholder="Пароль"
+                  secureTextEntry={!showPassword}
+                  onChangeText={handlePasswordChange}
+                  value={password}
+                  onFocus={() => handleFocus("inputPassword")}
+                  onBlur={handleBlur}
+                />
+                <TouchableOpacity
+                  onPress={handleTogglePasswordVisibility}
+                  style={styles.showPasswordButton}
+                >
+                  <Text style={styles.showPasswordText}>
+                    {showPassword ? "Приховати" : "Показати"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+              <Text style={styles.loginButtonText}>Увійти</Text>
             </TouchableOpacity>
+            <Text style={styles.loginLink}>
+              Немає акаунту?&nbsp;
+              <Text
+                style={styles.loginLinkUnderline}
+                onPress={() => navigation.navigate("Registration")}
+              >
+                Зареєструватися
+              </Text>
+            </Text>
           </View>
-        </View>
-        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-          <Text style={styles.loginButtonText}>Увійти</Text>
-        </TouchableOpacity>
-        <Text style={styles.loginLink}>
-          Немає акаунту?{" "}
-          <Text style={styles.loginLinkUnderline}>Зареєструватися</Text>
-        </Text>
-      </View>
-    </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </ImageBackground>
   );
 };
 
@@ -109,6 +128,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
   },
+  background: { width: "100%", height: "100%" },
   formContainer: {
     paddingTop: 32,
     paddingBottom: 144,
