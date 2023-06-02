@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  ImageBackground,
   View,
   TextInput,
   StyleSheet,
@@ -8,9 +9,13 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
+import BackgroundImage from "../assets/images/background.jpg";
 import AvatarEmpty from "../assets/images/avatar-blanc.jpg";
 import AddIcon from "../assets/images/add.png";
+import { useNavigation } from "@react-navigation/core";
 
 const RegistrationScreen = () => {
   const [username, setUsername] = useState("");
@@ -19,6 +24,7 @@ const RegistrationScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const [isFocused, setIsFocused] = useState(null);
+  const navigation = useNavigation();
 
   const handleUsernameChange = (text) => {
     setUsername(text);
@@ -59,94 +65,113 @@ const RegistrationScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={
-        isFocused === "inputName" || isFocused === "inputEmail"
-          ? -160
-          : isFocused === "inputPassword"
-          ? -225
-          : 0
-      }
-      style={styles.container}
+    <ImageBackground
+      source={BackgroundImage}
+      resizeMode="cover"
+      style={styles.background}
     >
-      <View style={styles.formContainer}>
-        <View style={styles.avatarContainer}>
-          {avatar ? (
-            <Image
-              source={{ uri: avatar }}
-              resizeMode="cover"
-              style={styles.avatarImage}
-            />
-          ) : (
-            <Image
-              source={AvatarEmpty}
-              resizeMode="cover"
-              style={styles.avatarImage}
-            />
-          )}
-          <TouchableOpacity style={styles.addButton} onPress={handleAddPhoto}>
-            <Image source={AddIcon} />
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.title}>Реєстрація</Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={[
-              styles.input,
-              isFocused === "inputName" && styles.inputFocused,
-            ]}
-            placeholder="Логін"
-            onChangeText={handleUsernameChange}
-            value={username}
-            onFocus={() => handleFocus("inputName")}
-            onBlur={handleBlur}
-          />
-          <TextInput
-            style={[
-              styles.input,
-              isFocused === "inputEmail" && styles.inputFocused,
-            ]}
-            placeholder="Адреса електронної пошти"
-            onChangeText={handleEmailChange}
-            value={email}
-            onFocus={() => handleFocus("inputEmail")}
-            onBlur={handleBlur}
-          />
-
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={[
-                styles.input,
-                isFocused === "inputPassword" && styles.inputFocused,
-              ]}
-              placeholder="Пароль"
-              secureTextEntry={!showPassword}
-              onChangeText={handlePasswordChange}
-              value={password}
-              onFocus={() => handleFocus("inputPassword")}
-              onBlur={handleBlur}
-            />
-
-            <TouchableOpacity
-              onPress={handleTogglePasswordVisibility}
-              style={styles.showPasswordButton}
-            >
-              <Text style={styles.showPasswordText}>
-                {showPassword ? "Приховати" : "Показати"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <TouchableOpacity
-          style={styles.registrationButton}
-          onPress={handleRegister}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
+          style={styles.container}
+          keyboardVerticalOffset={
+            isFocused === "inputName" || isFocused === "inputEmail"
+              ? -180
+              : isFocused === "inputPassword"
+              ? -225
+              : 0
+          }
         >
-          <Text style={styles.registrationButtonText}>Зареєстуватися</Text>
-        </TouchableOpacity>
-        <Text style={styles.registrationLink}>Вже є акаунт? Увійти</Text>
-      </View>
-    </KeyboardAvoidingView>
+          <View style={styles.formContainer}>
+            <View style={styles.avatarContainer}>
+              {avatar ? (
+                <Image
+                  source={{ uri: avatar }}
+                  resizeMode="cover"
+                  style={styles.avatarImage}
+                />
+              ) : (
+                <Image
+                  source={AvatarEmpty}
+                  resizeMode="cover"
+                  style={styles.avatarImage}
+                />
+              )}
+              <TouchableOpacity
+                style={styles.addButton}
+                onPress={handleAddPhoto}
+              >
+                <Image source={AddIcon} />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.title}>Реєстрація</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={[
+                  styles.input,
+                  isFocused === "inputName" && styles.inputFocused,
+                ]}
+                placeholder="Логін"
+                onChangeText={handleUsernameChange}
+                value={username}
+                onFocus={() => handleFocus("inputName")}
+                onBlur={handleBlur}
+              />
+              <TextInput
+                style={[
+                  styles.input,
+                  isFocused === "inputEmail" && styles.inputFocused,
+                ]}
+                placeholder="Адреса електронної пошти"
+                onChangeText={handleEmailChange}
+                value={email}
+                onFocus={() => handleFocus("inputEmail")}
+                onBlur={handleBlur}
+              />
+
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={[
+                    styles.input,
+                    isFocused === "inputPassword" && styles.inputFocused,
+                  ]}
+                  placeholder="Пароль"
+                  secureTextEntry={!showPassword}
+                  onChangeText={handlePasswordChange}
+                  value={password}
+                  onFocus={() => handleFocus("inputPassword")}
+                  onBlur={handleBlur}
+                />
+
+                <TouchableOpacity
+                  onPress={handleTogglePasswordVisibility}
+                  style={styles.showPasswordButton}
+                >
+                  <Text style={styles.showPasswordText}>
+                    {showPassword ? "Приховати" : "Показати"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.registrationButton}
+              onPress={handleRegister}
+            >
+              <Text style={styles.registrationButtonText}>Зареєстуватися</Text>
+            </TouchableOpacity>
+            <Text style={styles.registrationLink}>
+              Вже є акаунт?&nbsp;{" "}
+              <Text
+                style={styles.registrationLinkUnderline}
+                onPress={() => navigation.navigate("Login")}
+              >
+                Увійти
+              </Text>
+            </Text>
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </ImageBackground>
   );
 };
 
@@ -155,6 +180,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
   },
+  background: { width: "100%", height: "100%" },
   formContainer: {
     paddingTop: 92,
     paddingBottom: 45,
@@ -242,6 +268,9 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     color: "#1B4371",
     textAlign: "center",
+  },
+  registrationLinkUnderline: {
+    textDecorationLine: "underline",
   },
 });
 
