@@ -76,9 +76,9 @@ const RegistrationScreen = () => {
           style={styles.container}
           keyboardVerticalOffset={
             isFocused === "inputName" || isFocused === "inputEmail"
-              ? -180
+              ? -60
               : isFocused === "inputPassword"
-              ? -225
+              ? -125
               : 0
           }
         >
@@ -233,6 +233,7 @@ const styles = StyleSheet.create({
   inputFocused: {
     borderColor: "#FF6C00",
   },
+
   passwordContainer: {
     position: "relative",
   },

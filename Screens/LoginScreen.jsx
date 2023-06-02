@@ -58,14 +58,8 @@ const LoginScreen = () => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <KeyboardAvoidingView
           behavior={Platform.OS == "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={
-            isFocused === "inputEmail"
-              ? -300
-              : isFocused === "inputPassword"
-              ? -260
-              : 0
-          }
           style={styles.container}
+          keyboardVerticalOffset={-130}
         >
           <View style={styles.formContainer}>
             <Text style={styles.title}>Увійти</Text>
