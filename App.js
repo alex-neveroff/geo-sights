@@ -1,14 +1,11 @@
-import {
-  ImageBackground,
-  StyleSheet,
-  View,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
-import BackgroundImage from "./assets/images/background.jpg";
 import RegistrationScreen from "./Screens/RegistrationScreen";
 import LoginScreen from "./Screens/LoginScreen";
+import Home from "./Screens/Home";
+
+const MainStack = createStackNavigator();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -25,21 +22,12 @@ export default function App() {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View>
-        <ImageBackground
-          source={BackgroundImage}
-          resizeMode="cover"
-          style={styles.background}
-        >
-          <RegistrationScreen />
-          {/* <LoginScreen /> */}
-        </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+    <NavigationContainer>
+      <MainStack.Navigator initialRouteName="Login">
+        <MainStack.Screen name="Registration" component={RegistrationScreen} />
+        <MainStack.Screen name="Login" component={LoginScreen} />
+        <MainStack.Screen name="Home" component={Home} />
+      </MainStack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  background: { width: "100%", height: "100%" },
-});
