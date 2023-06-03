@@ -19,24 +19,35 @@ import { useNavigation } from "@react-navigation/core";
 import * as ImagePicker from "expo-image-picker";
 
 const RegistrationScreen = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [user, setUser] = useState({
+    username: "",
+    email: "",
+    password: "",
+    avatar: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [avatar, setAvatar] = useState(null);
   const [isFocused, setIsFocused] = useState(null);
   const navigation = useNavigation();
 
   const handleUsernameChange = (text) => {
-    setUsername(text);
+    setUser((prevState) => ({
+      ...prevState,
+      username: text,
+    }));
   };
 
   const handlePasswordChange = (text) => {
-    setPassword(text);
+    setUser((prevState) => ({
+      ...prevState,
+      password: text,
+    }));
   };
 
   const handleEmailChange = (text) => {
-    setEmail(text);
+    setUser((prevState) => ({
+      ...prevState,
+      email: text,
+    }));
   };
 
   const handleTogglePasswordVisibility = () => {
@@ -46,10 +57,7 @@ const RegistrationScreen = () => {
   const handleAddPhoto = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    if (status !== "granted") {
-      console.log("Permission denied");
-      return;
-    }
+    if (status !== "granted") return;
 
     const options = {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -63,8 +71,10 @@ const RegistrationScreen = () => {
     if (!result.canceled) {
       const selectedAsset = result.assets[0];
       const source = { uri: selectedAsset.uri };
-      setAvatar(source);
-      console.debug(avatar);
+      setUser((prevState) => ({
+        ...prevState,
+        avatar: source,
+      }));
     }
   };
 
@@ -77,14 +87,11 @@ const RegistrationScreen = () => {
   };
 
   const handleRegister = () => {
-    // navigation.navigate("Home", {
-    //   screen: "PostsScreen",
-    //   params: {
-    //     email: email,
-    //   },
-    // });
     navigation.navigate("Home", {
-      email: email,
+      screen: "PostsScreen",
+      params: {
+        user: user,
+      },
     });
   };
 
@@ -108,9 +115,9 @@ const RegistrationScreen = () => {
         >
           <View style={styles.formContainer}>
             <View style={styles.avatarContainer}>
-              {avatar ? (
+              {user.avatar ? (
                 <Image
-                  source={avatar}
+                  source={user.avatar}
                   resizeMode="cover"
                   style={styles.avatarImage}
                 />
@@ -137,7 +144,7 @@ const RegistrationScreen = () => {
                 ]}
                 placeholder="Логін"
                 onChangeText={handleUsernameChange}
-                value={username}
+                value={user.username}
                 onFocus={() => handleFocus("inputName")}
                 onBlur={handleBlur}
               />
@@ -148,7 +155,7 @@ const RegistrationScreen = () => {
                 ]}
                 placeholder="Адреса електронної пошти"
                 onChangeText={handleEmailChange}
-                value={email}
+                value={user.email}
                 onFocus={() => handleFocus("inputEmail")}
                 onBlur={handleBlur}
               />
@@ -162,7 +169,7 @@ const RegistrationScreen = () => {
                   placeholder="Пароль"
                   secureTextEntry={!showPassword}
                   onChangeText={handlePasswordChange}
-                  value={password}
+                  value={user.password}
                   onFocus={() => handleFocus("inputPassword")}
                   onBlur={handleBlur}
                 />

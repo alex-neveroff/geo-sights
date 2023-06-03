@@ -4,6 +4,9 @@ import { useFonts } from "expo-font";
 import RegistrationScreen from "./Screens/RegistrationScreen";
 import LoginScreen from "./Screens/LoginScreen";
 import Home from "./Screens/Home";
+import PostsScreen from "./Screens/PostsScreen";
+import ProfileScreen from "./Screens/ProfileScreen";
+import CreatePostsScreen from "./Screens/CreatePostsScreen";
 
 const MainStack = createStackNavigator();
 

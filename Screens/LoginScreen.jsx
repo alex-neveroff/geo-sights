@@ -46,7 +46,6 @@ const LoginScreen = () => {
       screen: "PostsScreen",
       params: { email: email },
     });
-    // navigation.navigate("Home", { email: email });
   };
 
   return (

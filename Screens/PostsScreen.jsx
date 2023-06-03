@@ -5,13 +5,18 @@ import { useNavigation, useRoute } from "@react-navigation/core";
 const PostsScreen = () => {
   const navigation = useNavigation();
   const {
-    params: { email },
+    params: { user },
   } = useRoute();
   return (
     <View style={styles.container}>
       <Text>Posts Screen</Text>
-
-      <Text>E-mail: {email}</Text>
+      <Image
+        source={user.avatar}
+        resizeMode="cover"
+        style={styles.avatarImage}
+      />
+      <Text>E-mail: {user.username}</Text>
+      <Text>E-mail: {user.email}</Text>
     </View>
   );
 };
@@ -22,6 +27,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  avatarImage: { width: 120, height: 120, borderRadius: 16 },
 });
 
 export default PostsScreen;
