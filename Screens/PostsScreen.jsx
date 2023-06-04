@@ -10,13 +10,15 @@ const PostsScreen = () => {
   return (
     <View style={styles.container}>
       <Text>Posts Screen</Text>
-      <Image
-        source={user.avatar}
-        resizeMode="cover"
-        style={styles.avatarImage}
-      />
-      <Text>E-mail: {user.username}</Text>
-      <Text>E-mail: {user.email}</Text>
+      {user.avatar && (
+        <Image
+          source={user.avatar}
+          resizeMode="cover"
+          style={styles.avatarImage}
+        />
+      )}
+      {user.username && <Text>E-mail: {user.username}</Text>}
+      {user.email && <Text>E-mail: {user.email}</Text>}
     </View>
   );
 };

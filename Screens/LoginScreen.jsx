@@ -15,18 +15,26 @@ import BackgroundImage from "../assets/images/background.jpg";
 import { useNavigation } from "@react-navigation/core";
 
 const LoginScreen = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const navigation = useNavigation();
 
   const handlePasswordChange = (text) => {
-    setPassword(text);
+    setUser((prevState) => ({
+      ...prevState,
+      password: text,
+    }));
   };
 
   const handleEmailChange = (text) => {
-    setEmail(text);
+    setUser((prevState) => ({
+      ...prevState,
+      email: text,
+    }));
   };
 
   const handleTogglePasswordVisibility = () => {
@@ -44,7 +52,9 @@ const LoginScreen = () => {
   const handleLogin = () => {
     navigation.navigate("Home", {
       screen: "PostsScreen",
-      params: { email: email },
+      params: {
+        user: user,
+      },
     });
   };
 
@@ -70,7 +80,7 @@ const LoginScreen = () => {
                 ]}
                 placeholder="Адреса електронної пошти"
                 onChangeText={handleEmailChange}
-                value={email}
+                value={user.email}
                 onFocus={() => handleFocus("inputEmail")}
                 onBlur={handleBlur}
               />
@@ -83,7 +93,7 @@ const LoginScreen = () => {
                   placeholder="Пароль"
                   secureTextEntry={!showPassword}
                   onChangeText={handlePasswordChange}
-                  value={password}
+                  value={user.password}
                   onFocus={() => handleFocus("inputPassword")}
                   onBlur={handleBlur}
                 />
