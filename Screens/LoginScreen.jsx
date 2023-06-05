@@ -10,12 +10,14 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert,
 } from "react-native";
-import BackgroundImage from "../assets/images/background.jpg";
 import { useNavigation } from "@react-navigation/core";
+import BackgroundImage from "../assets/images/background.jpg";
+import users from "../users";
 
 const LoginScreen = () => {
-  const [user, setUser] = useState({
+  const [currentUser, setCurrentUser] = useState({
     email: "",
     password: "",
   });
@@ -24,14 +26,14 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 
   const handlePasswordChange = (text) => {
-    setUser((prevState) => ({
+    setCurrentUser((prevState) => ({
       ...prevState,
       password: text,
     }));
   };
 
   const handleEmailChange = (text) => {
-    setUser((prevState) => ({
+    setCurrentUser((prevState) => ({
       ...prevState,
       email: text,
     }));
@@ -50,10 +52,18 @@ const LoginScreen = () => {
   };
 
   const handleLogin = () => {
+    const existingUser = users.find((user) => user.email === currentUser.email);
+    console.debug("users", users);
+    console.debug("existingUser", existingUser);
+    if (!existingUser) {
+      return Alert.alert(`Такого користувача немає. Зареєструйтесь`);
+    } else if (existingUser && existingUser.password !== currentUser.password) {
+      return Alert.alert(`Невірний пароль`);
+    }
     navigation.navigate("Home", {
       screen: "PostsScreen",
       params: {
-        user: user,
+        user: existingUser,
       },
     });
   };
@@ -80,7 +90,7 @@ const LoginScreen = () => {
                 ]}
                 placeholder="Адреса електронної пошти"
                 onChangeText={handleEmailChange}
-                value={user.email}
+                value={currentUser.email}
                 onFocus={() => handleFocus("inputEmail")}
                 onBlur={handleBlur}
               />
@@ -93,7 +103,7 @@ const LoginScreen = () => {
                   placeholder="Пароль"
                   secureTextEntry={!showPassword}
                   onChangeText={handlePasswordChange}
-                  value={user.password}
+                  value={currentUser.password}
                   onFocus={() => handleFocus("inputPassword")}
                   onBlur={handleBlur}
                 />

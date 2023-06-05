@@ -11,15 +11,17 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from "react-native";
+import { useNavigation } from "@react-navigation/core";
+import * as ImagePicker from "expo-image-picker";
 import BackgroundImage from "../assets/images/background.jpg";
 import AvatarEmpty from "../assets/images/avatar-blanc.jpg";
 import AddIcon from "../assets/images/add.png";
-import { useNavigation } from "@react-navigation/core";
-import * as ImagePicker from "expo-image-picker";
+import users from "../users";
 
 const RegistrationScreen = () => {
-  const [user, setUser] = useState({
+  const [newUser, setNewUser] = useState({
     username: "",
     email: "",
     password: "",
@@ -30,21 +32,21 @@ const RegistrationScreen = () => {
   const navigation = useNavigation();
 
   const handleUsernameChange = (text) => {
-    setUser((prevState) => ({
+    setNewUser((prevState) => ({
       ...prevState,
       username: text,
     }));
   };
 
   const handlePasswordChange = (text) => {
-    setUser((prevState) => ({
+    setNewUser((prevState) => ({
       ...prevState,
       password: text,
     }));
   };
 
   const handleEmailChange = (text) => {
-    setUser((prevState) => ({
+    setNewUser((prevState) => ({
       ...prevState,
       email: text,
     }));
@@ -71,7 +73,7 @@ const RegistrationScreen = () => {
     if (!result.canceled) {
       const selectedAsset = result.assets[0];
       const source = { uri: selectedAsset.uri };
-      setUser((prevState) => ({
+      setNewUser((prevState) => ({
         ...prevState,
         avatar: source,
       }));
@@ -87,10 +89,16 @@ const RegistrationScreen = () => {
   };
 
   const handleRegister = () => {
+    if (users.some((user) => user.username === newUser.username)) {
+      return Alert.alert(`Користувач ${newUser.username} вже існує`);
+    } else if (users.some((user) => user.email === newUser.email)) {
+      return Alert.alert(`Е-мейл ${newUser.email} вже зареєстрован`);
+    }
+    users.push(newUser);
     navigation.navigate("Home", {
       screen: "PostsScreen",
       params: {
-        user: user,
+        user: newUser,
       },
     });
   };
@@ -115,9 +123,9 @@ const RegistrationScreen = () => {
         >
           <View style={styles.formContainer}>
             <View style={styles.avatarContainer}>
-              {user.avatar ? (
+              {newUser.avatar ? (
                 <Image
-                  source={user.avatar}
+                  source={newUser.avatar}
                   resizeMode="cover"
                   style={styles.avatarImage}
                 />
@@ -144,7 +152,7 @@ const RegistrationScreen = () => {
                 ]}
                 placeholder="Логін"
                 onChangeText={handleUsernameChange}
-                value={user.username}
+                value={newUser.username}
                 onFocus={() => handleFocus("inputName")}
                 onBlur={handleBlur}
               />
@@ -155,7 +163,7 @@ const RegistrationScreen = () => {
                 ]}
                 placeholder="Адреса електронної пошти"
                 onChangeText={handleEmailChange}
-                value={user.email}
+                value={newUser.email}
                 onFocus={() => handleFocus("inputEmail")}
                 onBlur={handleBlur}
               />
@@ -169,7 +177,7 @@ const RegistrationScreen = () => {
                   placeholder="Пароль"
                   secureTextEntry={!showPassword}
                   onChangeText={handlePasswordChange}
-                  value={user.password}
+                  value={newUser.password}
                   onFocus={() => handleFocus("inputPassword")}
                   onBlur={handleBlur}
                 />
