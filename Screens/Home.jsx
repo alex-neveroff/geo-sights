@@ -5,12 +5,14 @@ import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import PostsScreen from "./PostsScreen";
 import CreatePostsScreen from "./CreatePostsScreen";
 import ProfileScreen from "./ProfileScreen";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 const Tabs = createBottomTabNavigator();
 
 const Home = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { screen } = route.params;
   return (
     <Tabs.Navigator screenOptions={styles.tabOptions}>
       <Tabs.Screen
@@ -45,7 +47,7 @@ const Home = () => {
           headerLeft: () => (
             <TouchableOpacity
               style={styles.arrowButton}
-              onPress={() => navigation.goBack()}
+              onPress={() => navigation.navigate(`"${screen}`)}
             >
               <Ionicons name="arrow-back-outline" size={24} color="#212121" />
             </TouchableOpacity>
@@ -59,6 +61,7 @@ const Home = () => {
         name="ProfileScreen"
         component={ProfileScreen}
         options={{
+          headerTitle: "",
           headerRight: () => (
             <TouchableOpacity
               style={styles.logOutButton}
