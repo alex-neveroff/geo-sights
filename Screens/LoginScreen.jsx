@@ -52,9 +52,9 @@ const LoginScreen = () => {
   };
 
   const handleLogin = () => {
-    const existingUser = users.find((user) => user.email === currentUser.email);
-    console.debug("users", users);
-    console.debug("existingUser", existingUser);
+    const existingUser = users.find(
+      (user) => user.email.toLowerCase() === currentUser.email.toLowerCase()
+    );
     if (!existingUser) {
       return Alert.alert(`Такого користувача немає. Зареєструйтесь`);
     } else if (existingUser && existingUser.password !== currentUser.password) {

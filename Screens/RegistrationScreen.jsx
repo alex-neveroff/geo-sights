@@ -90,17 +90,32 @@ const RegistrationScreen = () => {
   };
 
   const handleRegister = () => {
-    if (users.some((user) => user.username === newUser.username)) {
+    if (
+      users.some(
+        (user) => user.username.toLowerCase() === newUser.username.toLowerCase()
+      )
+    ) {
       return Alert.alert(`Користувач ${newUser.username} вже існує`);
-    } else if (users.some((user) => user.email === newUser.email)) {
+    } else if (
+      users.some(
+        (user) => user.email.toLowerCase() === newUser.email.toLowerCase()
+      )
+    ) {
       return Alert.alert(`Е-мейл ${newUser.email} вже зареєстрован`);
     }
     users.push(newUser);
-    console.debug(users);
     navigation.navigate("Home", {
       screen: "PostsScreen",
       params: {
         user: newUser,
+      },
+    });
+    setNewUser({
+      username: "",
+      email: "",
+      password: "",
+      avatar: {
+        uri: "https://raw.githubusercontent.com/alex-neveroff/react-native-hw/main/assets/images/avatar-blanc.jpg",
       },
     });
   };

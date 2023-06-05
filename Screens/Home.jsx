@@ -12,7 +12,7 @@ const Tabs = createBottomTabNavigator();
 const Home = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { screen } = route.params;
+
   return (
     <Tabs.Navigator screenOptions={styles.tabOptions}>
       <Tabs.Screen
@@ -47,7 +47,14 @@ const Home = () => {
           headerLeft: () => (
             <TouchableOpacity
               style={styles.arrowButton}
-              onPress={() => navigation.navigate(`"${screen}`)}
+              onPress={() =>
+                navigation.navigate("Home", {
+                  screen: `${route.params.screen}`,
+                  params: {
+                    user: route.params.params.user,
+                  },
+                })
+              }
             >
               <Ionicons name="arrow-back-outline" size={24} color="#212121" />
             </TouchableOpacity>
