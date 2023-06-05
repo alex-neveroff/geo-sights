@@ -77,8 +77,8 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
-  logOutButton: { marginRight: 16, marginBottom: 10 },
-  arrowButton: { marginLeft: 16, marginBottom: 10 },
+  logOutButton: { marginRight: 16, marginBottom: 10, marginTop: 11 },
+  arrowButton: { marginLeft: 16, marginBottom: 10, marginTop: 11 },
   headerTitle: {
     marginBottom: 11,
     marginTop: 11,
