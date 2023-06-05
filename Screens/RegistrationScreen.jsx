@@ -16,7 +16,6 @@ import {
 import { useNavigation } from "@react-navigation/core";
 import * as ImagePicker from "expo-image-picker";
 import BackgroundImage from "../assets/images/background.jpg";
-import AvatarEmpty from "../assets/images/avatar-blanc.jpg";
 import AddIcon from "../assets/images/add.png";
 import users from "../users";
 
@@ -25,7 +24,9 @@ const RegistrationScreen = () => {
     username: "",
     email: "",
     password: "",
-    avatar: "",
+    avatar: {
+      uri: "https://raw.githubusercontent.com/alex-neveroff/react-native-hw/main/assets/images/avatar-blanc.jpg",
+    },
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(null);
@@ -95,6 +96,7 @@ const RegistrationScreen = () => {
       return Alert.alert(`Е-мейл ${newUser.email} вже зареєстрован`);
     }
     users.push(newUser);
+    console.debug(users);
     navigation.navigate("Home", {
       screen: "PostsScreen",
       params: {
@@ -123,19 +125,12 @@ const RegistrationScreen = () => {
         >
           <View style={styles.formContainer}>
             <View style={styles.avatarContainer}>
-              {newUser.avatar ? (
-                <Image
-                  source={newUser.avatar}
-                  resizeMode="cover"
-                  style={styles.avatarImage}
-                />
-              ) : (
-                <Image
-                  source={AvatarEmpty}
-                  resizeMode="cover"
-                  style={styles.avatarImage}
-                />
-              )}
+              <Image
+                source={newUser.avatar}
+                resizeMode="cover"
+                style={styles.avatarImage}
+              />
+
               <TouchableOpacity
                 style={styles.addButton}
                 onPress={handleAddPhoto}
