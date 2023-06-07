@@ -22,13 +22,11 @@ const Home = () => {
           headerTitle: () => <Text style={styles.headerTitle}>Публікації</Text>,
 
           headerRight: () => (
-            <TouchableOpacity style={styles.logOutButton}>
-              <Ionicons
-                name="log-out-outline"
-                size={24}
-                color="#BDBDBD"
-                onPress={() => navigation.navigate("Login")}
-              />
+            <TouchableOpacity
+              style={styles.logOutButton}
+              onPress={() => navigation.navigate("Login")}
+            >
+              <Ionicons name="log-out-outline" size={24} color="#BDBDBD" />
             </TouchableOpacity>
           ),
           tabBarIcon: ({ color }) => (
