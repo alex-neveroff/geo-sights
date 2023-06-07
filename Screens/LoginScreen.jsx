@@ -137,11 +137,11 @@ const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  background: { width: "100%", height: "100%" },
   container: {
     flex: 1,
     justifyContent: "flex-end",
   },
-  background: { width: "100%", height: "100%" },
   formContainer: {
     paddingTop: 32,
     paddingBottom: 144,
