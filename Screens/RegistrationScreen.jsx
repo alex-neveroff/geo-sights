@@ -15,8 +15,8 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
 import BackgroundImage from "../assets/images/background.jpg";
-import AddIcon from "../assets/images/add.png";
 import users from "../users";
 
 const RegistrationScreen = () => {
@@ -150,7 +150,7 @@ const RegistrationScreen = () => {
                 style={styles.addButton}
                 onPress={handleAddPhoto}
               >
-                <Image source={AddIcon} />
+                <Ionicons name="add-circle-outline" size={25} color="#FF6C00" />
               </TouchableOpacity>
             </View>
             <Text style={styles.title}>Реєстрація</Text>
