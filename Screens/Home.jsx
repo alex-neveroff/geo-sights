@@ -12,7 +12,6 @@ const Tabs = createBottomTabNavigator();
 const Home = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  // console.debug(route.params.params.user);
 
   return (
     <Tabs.Navigator screenOptions={styles.tabOptions}>
@@ -38,6 +37,7 @@ const Home = () => {
       <Tabs.Screen
         name="CreatePostsScreen"
         component={CreatePostsScreen}
+        initialParams={{ user: route.params.params.user }}
         options={{
           headerTitle: () => (
             <Text style={styles.headerTitle}>Створити публікацію</Text>

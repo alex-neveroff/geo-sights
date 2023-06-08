@@ -6,15 +6,16 @@ const users = [
     email: "q",
     password: "q",
     avatar: {
-      uri: "https://raw.githubusercontent.com/alex-neveroff/react-native-hw/main/assets/images/avatar-blanc.jpg",
+      uri: null,
     },
     posts: [
       {
-        title: "",
-        location: "",
+        title: "Test title",
+        location: "Test location",
         photo: {
-          uri: "",
+          uri: null,
         },
+        comments: [],
       },
     ],
   },

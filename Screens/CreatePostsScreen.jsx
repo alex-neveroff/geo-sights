@@ -18,12 +18,16 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 
 const CreatePostsScreen = () => {
   const navigation = useNavigation();
+  const {
+    params: { user },
+  } = useRoute();
 
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef(null);
   const [newPost, setNewPost] = useState({
     title: "",
     location: "",
+    comments: [],
     photo: {
       uri: "",
     },
@@ -72,16 +76,26 @@ const CreatePostsScreen = () => {
           },
         }));
         setIsPreviewing(true);
-        console.debug(newPost.photo.uri);
       });
     }
   };
 
   const handlePublish = () => {
+    user.posts.push(newPost);
+
     navigation.navigate("Home", {
       screen: "PostsScreen",
       params: {
-        user: newPost,
+        user: user,
+      },
+    });
+    setIsPreviewing(false);
+    setNewPost({
+      title: "",
+      location: "",
+      comments: [],
+      photo: {
+        uri: "",
       },
     });
   };
@@ -133,12 +147,20 @@ const CreatePostsScreen = () => {
             onChangeText={handleTitleChange}
             value={newPost.title}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Місцевість"
-            onChangeText={handleLocationChange}
-            value={newPost.location}
-          />
+          <View>
+            <Ionicons
+              name="location-outline"
+              size={24}
+              color="#BDBDBD"
+              style={styles.locationIcon}
+            />
+            <TextInput
+              style={[styles.input, styles.inputLocation]}
+              placeholder="Місцевість"
+              onChangeText={handleLocationChange}
+              value={newPost.location}
+            />
+          </View>
           <TouchableOpacity
             style={[
               styles.publishButton,
@@ -208,6 +230,8 @@ const styles = StyleSheet.create({
     color: "#BDBDBD",
     marginBottom: 16,
   },
+  inputLocation: { paddingHorizontal: 44 },
+  locationIcon: { position: "absolute", top: 12, left: 16 },
   publishButton: {
     paddingHorizontal: 32,
     paddingVertical: 16,

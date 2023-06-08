@@ -27,6 +27,7 @@ const RegistrationScreen = () => {
     avatar: {
       uri: "https://raw.githubusercontent.com/alex-neveroff/react-native-hw/main/assets/images/avatar-blanc.jpg",
     },
+    posts: [],
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(null);
