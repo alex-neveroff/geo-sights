@@ -6,7 +6,7 @@ const users = [
     email: "q",
     password: "q",
     avatar: {
-      uri: null,
+      uri: "https://www.w3schools.com/w3images/avatar2.png",
     },
     posts: [
       {

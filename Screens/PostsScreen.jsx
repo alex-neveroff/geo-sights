@@ -15,7 +15,7 @@ const PostsScreen = () => {
   const {
     params: { user },
   } = useRoute();
-  console.debug(user.posts);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.userContainer}>
@@ -49,6 +49,7 @@ const PostsScreen = () => {
                     navigation.navigate("Comments", {
                       comments: post.comments,
                       photo: post.photo,
+                      user: user,
                     })
                   }
                 >
