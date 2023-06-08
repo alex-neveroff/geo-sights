@@ -1,9 +1,12 @@
+import { Text, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
 import RegistrationScreen from "./Screens/RegistrationScreen";
 import LoginScreen from "./Screens/LoginScreen";
 import Home from "./Screens/Home";
+import MapScreen from "./Screens/MapScreen";
+import CommentsScreen from "./Screens/CommentsScreen";
 
 const MainStack = createStackNavigator();
 
@@ -22,24 +25,55 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <MainStack.Navigator initialRouteName="Login">
-        <MainStack.Screen
-          name="Registration"
-          component={RegistrationScreen}
-          options={{ headerShown: false }}
-        />
-        <MainStack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <MainStack.Screen
-          name="Home"
-          component={Home}
-          options={{ headerShown: false }}
-        />
-      </MainStack.Navigator>
-    </NavigationContainer>
+    <>
+      <NavigationContainer>
+        <MainStack.Navigator
+          initialRouteName="Login"
+          screenOptions={styles.tabOptions}
+        >
+          <MainStack.Screen
+            name="Registration"
+            component={RegistrationScreen}
+            options={{ headerShown: false }}
+          />
+          <MainStack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ headerShown: false }}
+          />
+          <MainStack.Screen
+            name="Home"
+            component={Home}
+            options={{ headerShown: false }}
+          />
+          <MainStack.Screen
+            name="Map"
+            component={MapScreen}
+            options={{
+              headerTitle: () => <Text style={styles.headerTitle}>Мапа</Text>,
+            }}
+          />
+          <MainStack.Screen
+            name="Comments"
+            component={CommentsScreen}
+            options={{
+              headerTitle: () => (
+                <Text style={styles.headerTitle}>Коментарі</Text>
+              ),
+            }}
+          />
+        </MainStack.Navigator>
+      </NavigationContainer>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  tabOptions: { headerTitleAlign: "center" },
+  headerTitle: {
+    marginBottom: 11,
+    marginTop: 11,
+    fontFamily: "Roboto-Medium",
+    fontSize: 17,
+  },
+});

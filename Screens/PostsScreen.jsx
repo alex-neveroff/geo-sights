@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -8,6 +15,7 @@ const PostsScreen = () => {
   const {
     params: { user },
   } = useRoute();
+  console.debug(user.posts);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.userContainer}>
@@ -36,7 +44,14 @@ const PostsScreen = () => {
               />
               <Text style={styles.postTitle}>{post.title}</Text>
               <View style={styles.postDescription}>
-                <View>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("Comments", {
+                      comments: post.comments,
+                      photo: post.photo,
+                    })
+                  }
+                >
                   <Ionicons
                     name="chatbubble-outline"
                     size={24}
@@ -46,9 +61,15 @@ const PostsScreen = () => {
                   <Text style={styles.postComments}>
                     {post.comments.length}
                   </Text>
-                </View>
+                </TouchableOpacity>
 
-                <View>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("Map", {
+                      location: post.location,
+                    })
+                  }
+                >
                   <Ionicons
                     name="location-outline"
                     size={24}
@@ -56,7 +77,7 @@ const PostsScreen = () => {
                     style={styles.areaIcon}
                   />
                   <Text style={styles.postArea}>{post.area}</Text>
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
           ))}

@@ -9,6 +9,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Image,
+  Alert,
 } from "react-native";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
@@ -42,7 +43,7 @@ const CreatePostsScreen = () => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("Permission to access location was denied");
+        Alert.alert("У доступі до місцезнаходження відмовлено");
         return;
       }
       let currentLocation = await Location.getCurrentPositionAsync({});
