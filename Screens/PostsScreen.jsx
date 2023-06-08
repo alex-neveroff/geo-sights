@@ -8,7 +8,6 @@ const PostsScreen = () => {
   const {
     params: { user },
   } = useRoute();
-  console.debug(user);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.userContainer}>
@@ -54,9 +53,9 @@ const PostsScreen = () => {
                     name="location-outline"
                     size={24}
                     color="#BDBDBD"
-                    style={styles.locationIcon}
+                    style={styles.areaIcon}
                   />
-                  <Text style={styles.postLocation}>{post.location}</Text>
+                  <Text style={styles.postArea}>{post.area}</Text>
                 </View>
               </View>
             </View>
@@ -107,14 +106,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     paddingLeft: 30,
   },
-  postLocation: {
+  postArea: {
     fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
     color: "#212121",
     textDecorationLine: "underline",
   },
-  locationIcon: { position: "absolute", top: -2, left: -28 },
+  areaIcon: { position: "absolute", top: -2, left: -28 },
   commentIcon: { position: "absolute", top: -3, left: 0 },
 });
 

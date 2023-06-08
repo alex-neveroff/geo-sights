@@ -34,11 +34,13 @@ const Home = () => {
           ),
         }}
       />
+
       <Tabs.Screen
         name="CreatePostsScreen"
         component={CreatePostsScreen}
         initialParams={{ user: route.params.params.user }}
         options={{
+          tabBarStyle: { display: "none" },
           headerTitle: () => (
             <Text style={styles.headerTitle}>Створити публікацію</Text>
           ),
@@ -58,7 +60,7 @@ const Home = () => {
               <Ionicons name="arrow-back-outline" size={24} color="#212121" />
             </TouchableOpacity>
           ),
-          initialParams: { user: route.params.params.user },
+
           tabBarIcon: ({ color }) => (
             <Ionicons name="add" size={24} color={color} />
           ),

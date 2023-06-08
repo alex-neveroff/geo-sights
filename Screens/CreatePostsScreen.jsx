@@ -15,6 +15,7 @@ import * as MediaLibrary from "expo-media-library";
 import { Ionicons } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import * as Location from "expo-location";
 
 const CreatePostsScreen = () => {
   const navigation = useNavigation();
@@ -26,14 +27,35 @@ const CreatePostsScreen = () => {
   const cameraRef = useRef(null);
   const [newPost, setNewPost] = useState({
     title: "",
-    location: "",
+    area: "",
+    location: {},
     comments: [],
     photo: {
       uri: "",
     },
   });
   const [isPreviewing, setIsPreviewing] = useState(false);
-  const isShowButton = newPost.title && newPost.location ? true : false;
+  const isShowButton =
+    newPost.title && newPost.area && newPost.photo.uri ? true : false;
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission to access location was denied");
+        return;
+      }
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      const coords = {
+        latitude: currentLocation.coords.latitude,
+        longitude: currentLocation.coords.longitude,
+      };
+      setNewPost((prevState) => ({
+        ...prevState,
+        location: coords,
+      }));
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -57,17 +79,16 @@ const CreatePostsScreen = () => {
       title: text,
     }));
   };
-  const handleLocationChange = (text) => {
+  const handleAreaChange = (text) => {
     setNewPost((prevState) => ({
       ...prevState,
-      location: text,
+      area: text,
     }));
   };
 
   const takePicture = async () => {
     if (cameraRef.current) {
       const { uri } = await cameraRef.current.takePictureAsync();
-
       await MediaLibrary.createAssetAsync(uri).then((asset) => {
         setNewPost((prevPost) => ({
           ...prevPost,
@@ -82,17 +103,21 @@ const CreatePostsScreen = () => {
 
   const handlePublish = () => {
     user.posts.push(newPost);
-
     navigation.navigate("Home", {
       screen: "PostsScreen",
       params: {
         user: user,
       },
     });
+    resetPost();
+  };
+
+  const resetPost = () => {
     setIsPreviewing(false);
     setNewPost({
       title: "",
       location: "",
+      area: "",
       comments: [],
       photo: {
         uri: "",
@@ -152,13 +177,13 @@ const CreatePostsScreen = () => {
               name="location-outline"
               size={24}
               color="#BDBDBD"
-              style={styles.locationIcon}
+              style={styles.areaIcon}
             />
             <TextInput
-              style={[styles.input, styles.inputLocation]}
+              style={[styles.input, styles.inputArea]}
               placeholder="Місцевість"
-              onChangeText={handleLocationChange}
-              value={newPost.location}
+              onChangeText={handleAreaChange}
+              value={newPost.area}
             />
           </View>
           <TouchableOpacity
@@ -179,6 +204,20 @@ const CreatePostsScreen = () => {
             </Text>
           </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          activeOpacity={0.6}
+          style={styles.trashButton}
+          onPress={resetPost}
+        >
+          <View style={styles.trashOut}>
+            <Ionicons
+              name="trash-outline"
+              size={24}
+              color="#BDBDBD"
+              style={styles.trashIcon}
+            />
+          </View>
+        </TouchableOpacity>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
@@ -189,6 +228,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     backgroundColor: "#FFFFFF",
+    borderTopColor: "#808080",
+    borderTopWidth: 1,
   },
   createPostContainer: {
     paddingHorizontal: 16,
@@ -230,8 +271,8 @@ const styles = StyleSheet.create({
     color: "#BDBDBD",
     marginBottom: 16,
   },
-  inputLocation: { paddingHorizontal: 44 },
-  locationIcon: { position: "absolute", top: 12, left: 16 },
+  inputArea: { paddingHorizontal: 44 },
+  areaIcon: { position: "absolute", top: 12, left: 16 },
   publishButton: {
     paddingHorizontal: 32,
     paddingVertical: 16,
@@ -249,6 +290,18 @@ const styles = StyleSheet.create({
   },
   disabledButton: { backgroundColor: "#F6F6F6" },
   disabledText: { color: "#BDBDBD" },
+  trashButton: {
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  trashOut: {
+    backgroundColor: "#F6F6F6",
+    width: 70,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+  },
 });
 
 export default CreatePostsScreen;

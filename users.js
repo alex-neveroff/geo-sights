@@ -11,7 +11,8 @@ const users = [
     posts: [
       {
         title: "Test title",
-        location: "Test location",
+        location: {},
+        area: "Test area",
         photo: {
           uri: null,
         },
