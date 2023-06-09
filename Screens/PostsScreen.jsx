@@ -77,7 +77,9 @@ const PostsScreen = () => {
                     color="#BDBDBD"
                     style={styles.areaIcon}
                   />
-                  <Text style={styles.postArea}>{post.area}</Text>
+                  <Text
+                    style={styles.postArea}
+                  >{`${post.city}, ${post.country}`}</Text>
                 </TouchableOpacity>
               </View>
             </View>

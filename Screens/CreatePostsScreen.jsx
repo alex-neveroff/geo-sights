@@ -24,21 +24,24 @@ const CreatePostsScreen = () => {
   const {
     params: { user },
   } = useRoute();
-
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef(null);
+  const [isPreviewing, setIsPreviewing] = useState(false);
   const [newPost, setNewPost] = useState({
     title: "",
-    area: "",
+    city: "",
+    country: "",
     location: {},
     comments: [],
     photo: {
       uri: "",
     },
   });
-  const [isPreviewing, setIsPreviewing] = useState(false);
+
+  console.debug(newPost);
+
   const isShowButton =
-    newPost.title && newPost.area && newPost.photo.uri ? true : false;
+    newPost.title && newPost.country && newPost.photo.uri ? true : false;
 
   useEffect(() => {
     (async () => {
@@ -74,16 +77,33 @@ const CreatePostsScreen = () => {
     return <Text>Немає доступу до камери</Text>;
   }
 
+  const getCityAndCountry = async () => {
+    if (newPost.location) {
+      try {
+        const { latitude, longitude } = newPost.location;
+        const locationPoint = await Location.reverseGeocodeAsync({
+          latitude,
+          longitude,
+        });
+        if (locationPoint.length > 0) {
+          const locationCity = locationPoint[0].city;
+          const locationCountry = locationPoint[0].country;
+          setNewPost((prevState) => ({
+            ...prevState,
+            city: locationCity,
+            country: locationCountry,
+          }));
+        }
+      } catch (error) {
+        alert(`Місцезнаходження не визначене`);
+      }
+    }
+  };
+
   const handleTitleChange = (text) => {
     setNewPost((prevState) => ({
       ...prevState,
       title: text,
-    }));
-  };
-  const handleAreaChange = (text) => {
-    setNewPost((prevState) => ({
-      ...prevState,
-      area: text,
     }));
   };
 
@@ -104,9 +124,7 @@ const CreatePostsScreen = () => {
 
   const handleAddPhoto = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
     if (status !== "granted") return;
-
     const options = {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -141,15 +159,16 @@ const CreatePostsScreen = () => {
 
   const resetPost = () => {
     setIsPreviewing(false);
-    setNewPost({
+
+    setNewPost((prevPost) => ({
+      ...prevPost,
       title: "",
-      location: "",
-      area: "",
-      comments: [],
+      city: "",
+      country: "",
       photo: {
         uri: "",
       },
-    });
+    }));
   };
 
   return (
@@ -208,12 +227,18 @@ const CreatePostsScreen = () => {
               color="#BDBDBD"
               style={styles.areaIcon}
             />
-            <TextInput
-              style={[styles.input, styles.inputArea]}
-              placeholder="Місцевість"
-              onChangeText={handleAreaChange}
-              value={newPost.area}
-            />
+            <TouchableOpacity
+              style={styles.areaButton}
+              onPress={getCityAndCountry}
+            >
+              {newPost.country ? (
+                <Text
+                  style={styles.areaButtonText}
+                >{`${newPost.city}, ${newPost.country}`}</Text>
+              ) : (
+                <Text style={styles.areaButtonText}>Місцевість</Text>
+              )}
+            </TouchableOpacity>
           </View>
           <TouchableOpacity
             style={[
@@ -304,7 +329,20 @@ const styles = StyleSheet.create({
     color: "#BDBDBD",
     marginBottom: 16,
   },
-  inputArea: { paddingHorizontal: 44 },
+  areaButton: {
+    height: 50,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E8E8E8",
+    paddingHorizontal: 44,
+    marginBottom: 16,
+    justifyContent: "center",
+  },
+  areaButtonText: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#BDBDBD",
+  },
   areaIcon: { position: "absolute", top: 12, left: 16 },
   publishButton: {
     paddingHorizontal: 32,
