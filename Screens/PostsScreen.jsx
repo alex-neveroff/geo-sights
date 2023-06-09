@@ -96,6 +96,8 @@ const styles = StyleSheet.create({
     paddingTop: 32,
     paddingHorizontal: 16,
     backgroundColor: "#FFFFFF",
+    borderTopColor: "#BDBDBD",
+    borderTopWidth: 1,
   },
   userContainer: { flexDirection: "row", gap: 8 },
   avatarImage: { width: 120, height: 120, borderRadius: 16 },

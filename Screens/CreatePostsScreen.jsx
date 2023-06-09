@@ -37,9 +37,6 @@ const CreatePostsScreen = () => {
       uri: "",
     },
   });
-
-  console.debug(newPost);
-
   const isShowButton =
     newPost.title && newPost.country && newPost.photo.uri ? true : false;
 
@@ -81,13 +78,14 @@ const CreatePostsScreen = () => {
     if (newPost.location) {
       try {
         const { latitude, longitude } = newPost.location;
-        const locationPoint = await Location.reverseGeocodeAsync({
-          latitude,
-          longitude,
-        });
-        if (locationPoint.length > 0) {
-          const locationCity = locationPoint[0].city;
-          const locationCountry = locationPoint[0].country;
+
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=uk`
+        );
+        const data = await response.json();
+        if (data.address) {
+          const locationCity = data.address.city;
+          const locationCountry = data.address.country;
           setNewPost((prevState) => ({
             ...prevState,
             city: locationCity,
@@ -282,7 +280,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     backgroundColor: "#FFFFFF",
-    borderTopColor: "#808080",
+    borderTopColor: "#BDBDBD",
     borderTopWidth: 1,
   },
   createPostContainer: {
