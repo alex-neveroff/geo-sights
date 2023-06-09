@@ -74,10 +74,11 @@ const RegistrationScreen = () => {
 
     if (!result.canceled) {
       const selectedAsset = result.assets[0];
-      const source = { uri: selectedAsset.uri };
       setNewUser((prevState) => ({
         ...prevState,
-        avatar: source,
+        avatar: {
+          uri: selectedAsset.uri,
+        },
       }));
     }
   };

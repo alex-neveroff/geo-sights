@@ -11,6 +11,7 @@ import {
   Image,
   Alert,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { Ionicons } from "@expo/vector-icons";
@@ -62,7 +63,6 @@ const CreatePostsScreen = () => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       await MediaLibrary.requestPermissionsAsync();
-
       setHasPermission(status === "granted");
     })();
   }, []);
@@ -102,6 +102,32 @@ const CreatePostsScreen = () => {
     }
   };
 
+  const handleAddPhoto = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") return;
+
+    const options = {
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    };
+
+    let result = await ImagePicker.launchImageLibraryAsync(options);
+
+    if (!result.canceled) {
+      const selectedAsset = result.assets[0];
+      setNewPost((prevPost) => ({
+        ...prevPost,
+        photo: {
+          uri: selectedAsset.uri,
+        },
+      }));
+      setIsPreviewing(true);
+    }
+  };
+
   const handlePublish = () => {
     user.posts.push(newPost);
     navigation.navigate("Home", {
@@ -134,7 +160,7 @@ const CreatePostsScreen = () => {
         keyboardVerticalOffset={-50}
       >
         <View style={styles.createPostContainer}>
-          <View style={styles.cameraContainer}>
+          <View style={styles.imageContainer}>
             {isPreviewing ? (
               <Image
                 source={{ uri: newPost.photo.uri }}
@@ -161,11 +187,13 @@ const CreatePostsScreen = () => {
               </Camera>
             )}
           </View>
-          {!isShowButton ? (
-            <Text style={styles.title}>Завантажте фото</Text>
-          ) : (
-            <Text style={styles.title}>Редагувати фото</Text>
-          )}
+          <TouchableOpacity onPress={handleAddPhoto}>
+            {!isPreviewing ? (
+              <Text style={styles.title}>Завантажте фото</Text>
+            ) : (
+              <Text style={styles.title}>Редагувати фото</Text>
+            )}
+          </TouchableOpacity>
 
           <TextInput
             style={styles.input}
@@ -236,13 +264,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 80,
   },
-  cameraContainer: { marginBottom: 9, height: 253 },
-  camera: { flex: 1 },
+  imageContainer: {
+    marginBottom: 9,
+    height: 253,
+    overflow: "hidden",
+  },
+  camera: { width: "100%", aspectRatio: 3 / 4, alignSelf: "center" },
   photoView: {
     flex: 1,
     backgroundColor: "transparent",
-    justifyContent: "center",
     alignItems: "center",
+    paddingTop: 95,
   },
   iconOut: {
     backgroundColor: "white",
