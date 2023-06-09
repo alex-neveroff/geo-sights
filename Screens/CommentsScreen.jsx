@@ -73,51 +73,69 @@ const CommentsScreen = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS == "ios" ? "padding" : "height"}
-        style={styles.container}
-        keyboardVerticalOffset={-140}
-      >
-        <Image source={photo} resizeMode="cover" style={styles.postImage} />
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.commentsContainer}>
-            {comments.map((comment, index) => (
-              <View style={styles.comment} key={index}>
-                <Image
-                  source={comment.userAvatar}
-                  resizeMode="cover"
-                  style={styles.commentAvatar}
-                />
+    <KeyboardAvoidingView
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={styles.container}
+      keyboardVerticalOffset={-140}
+    >
+      <Image source={photo} resizeMode="cover" style={styles.postImage} />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.commentsContainer}>
+          {comments.map((comment, index) => {
+            const isEven = index % 2 === 0;
+            const commentStyle = isEven
+              ? styles.commentEven
+              : styles.commentOdd;
+            return (
+              <View style={[styles.comment, commentStyle]} key={index}>
+                {isEven ? (
+                  <Image
+                    source={comment.userAvatar}
+                    resizeMode="cover"
+                    style={styles.commentAvatar}
+                  />
+                ) : null}
                 <View style={styles.commentWrap}>
                   <Text style={styles.commentText}>{comment.text}</Text>
-                  <Text style={[styles.commentDate, styles.commentDateRight]}>
+                  <Text
+                    style={[
+                      styles.commentDate,
+                      isEven ? styles.commentDateRight : null,
+                    ]}
+                  >
                     {comment.date}
                   </Text>
                 </View>
+                {!isEven ? (
+                  <Image
+                    source={comment.userAvatar}
+                    resizeMode="cover"
+                    style={styles.commentAvatar}
+                  />
+                ) : null}
               </View>
-            ))}
-          </View>
-        </ScrollView>
-        <View style={styles.commentFooter}>
-          <TextInput
-            style={[styles.commentInput]}
-            placeholder="Коментувати..."
-            onChangeText={handleCommentChange}
-            value={newComment.text}
-          />
-          <TouchableOpacity
-            activeOpacity={0.6}
-            style={styles.commentButton}
-            onPress={handlePublishComment}
-          >
-            <View style={styles.commentButtonOut}>
-              <Ionicons name="arrow-up-outline" size={24} color="#FFFFFF" />
-            </View>
-          </TouchableOpacity>
+            );
+          })}
         </View>
-      </KeyboardAvoidingView>
-    </TouchableWithoutFeedback>
+      </ScrollView>
+      <View style={styles.commentFooter}>
+        <TextInput
+          style={[styles.commentInput]}
+          placeholder="Коментувати..."
+          onChangeText={handleCommentChange}
+          value={newComment.text}
+        />
+        <TouchableOpacity
+          activeOpacity={0.6}
+          style={styles.commentButton}
+          onPress={handlePublishComment}
+        >
+          <View style={styles.commentButtonOut}>
+            <Ionicons name="arrow-up-outline" size={24} color="#FFFFFF" />
+          </View>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -130,16 +148,22 @@ const styles = StyleSheet.create({
     borderTopColor: "#BDBDBD",
     borderTopWidth: 1,
   },
+  commentEven: {
+    justifyContent: "flex-end",
+  },
+  commentOdd: {
+    justifyContent: "flex-start",
+  },
   postImage: { width: "100%", height: 240, borderRadius: 50, marginBottom: 8 },
   commentsContainer: { paddingTop: 32, paddingBottom: 80, gap: 24 },
   comment: { flexDirection: "row", gap: 16 },
   commentAvatar: { width: 28, height: 28, borderRadius: 50 },
   commentWrap: {
+    flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderRadius: 6,
     backgroundColor: "rgba(0, 0, 0, 0.03)",
-    width: 299,
   },
   commentText: {
     fontFamily: "Roboto-Regular",
@@ -154,7 +178,7 @@ const styles = StyleSheet.create({
     lineHeight: 12,
     color: "#BDBDBD",
   },
-  commentDateRight: {},
+  commentDateRight: { textAlign: "right" },
   commentFooter: {
     position: "absolute",
     bottom: 0,
