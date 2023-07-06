@@ -17,27 +17,11 @@ import BackgroundImage from "../assets/images/background.jpg";
 import users from "../users";
 
 const LoginScreen = () => {
-  const [currentUser, setCurrentUser] = useState({
-    email: "",
-    password: "",
-  });
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const navigation = useNavigation();
-
-  const handlePasswordChange = (text) => {
-    setCurrentUser((prevState) => ({
-      ...prevState,
-      password: text,
-    }));
-  };
-
-  const handleEmailChange = (text) => {
-    setCurrentUser((prevState) => ({
-      ...prevState,
-      email: text,
-    }));
-  };
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -52,20 +36,26 @@ const LoginScreen = () => {
   };
 
   const handleLogin = () => {
-    const existingUser = users.find(
-      (user) => user.email.toLowerCase() === currentUser.email.toLowerCase()
-    );
-    if (!existingUser) {
-      return Alert.alert(`Такого користувача немає. Зареєструйтесь`);
-    } else if (existingUser && existingUser.password !== currentUser.password) {
-      return Alert.alert(`Невірний пароль`);
-    }
-    navigation.navigate("Home", {
-      screen: "PostsScreen",
-      params: {
-        user: existingUser,
-      },
-    });
+    // const existingUser = users.find(
+    //   (user) => user.email.toLowerCase() === currentUser.email.toLowerCase()
+    // );
+    // if (!existingUser) {
+    //   return Alert.alert(`Такого користувача немає. Зареєструйтесь`);
+    // } else if (existingUser && existingUser.password !== currentUser.password) {
+    //   return Alert.alert(`Невірний пароль`);
+    // }
+
+    // navigation.navigate("Home", {
+    //   screen: "PostsScreen",
+    //   params: {
+    //     user: existingUser,
+    //   },
+    // });
+
+    loginDB({ email, password });
+
+    setEmail(null);
+    setPassword(null);
   };
 
   return (
@@ -89,8 +79,8 @@ const LoginScreen = () => {
                   isFocused === "inputEmail" && styles.inputFocused,
                 ]}
                 placeholder="Адреса електронної пошти"
-                onChangeText={handleEmailChange}
-                value={currentUser.email}
+                onChangeText={setEmail}
+                value={email}
                 onFocus={() => handleFocus("inputEmail")}
                 onBlur={handleBlur}
               />
@@ -102,8 +92,8 @@ const LoginScreen = () => {
                   ]}
                   placeholder="Пароль"
                   secureTextEntry={!showPassword}
-                  onChangeText={handlePasswordChange}
-                  value={currentUser.password}
+                  onChangeText={setPassword}
+                  value={password}
                   onFocus={() => handleFocus("inputPassword")}
                   onBlur={handleBlur}
                 />

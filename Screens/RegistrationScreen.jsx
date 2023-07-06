@@ -17,42 +17,18 @@ import { useNavigation } from "@react-navigation/core";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import BackgroundImage from "../assets/images/background.jpg";
-import users from "../users";
+import AvatarImage from "../assets/images/avatarblanc.jpg";
+import { registerDB } from "../firebase/auth";
 
 const RegistrationScreen = () => {
-  const [newUser, setNewUser] = useState({
-    username: "",
-    email: "",
-    password: "",
-    avatar: {
-      uri: "https://raw.githubusercontent.com/alex-neveroff/react-native-hw/main/assets/images/avatar-blanc.jpg",
-    },
-    posts: [],
-  });
+  const [username, setUsername] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [avatar, setAvatar] = useState(null);
+
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(null);
   const navigation = useNavigation();
-
-  const handleUsernameChange = (text) => {
-    setNewUser((prevState) => ({
-      ...prevState,
-      username: text,
-    }));
-  };
-
-  const handlePasswordChange = (text) => {
-    setNewUser((prevState) => ({
-      ...prevState,
-      password: text,
-    }));
-  };
-
-  const handleEmailChange = (text) => {
-    setNewUser((prevState) => ({
-      ...prevState,
-      email: text,
-    }));
-  };
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -74,12 +50,7 @@ const RegistrationScreen = () => {
 
     if (!result.canceled) {
       const selectedAsset = result.assets[0];
-      setNewUser((prevState) => ({
-        ...prevState,
-        avatar: {
-          uri: selectedAsset.uri,
-        },
-      }));
+      setAvatar(selectedAsset.uri);
     }
   };
 
@@ -92,34 +63,37 @@ const RegistrationScreen = () => {
   };
 
   const handleRegister = () => {
-    if (
-      users.some(
-        (user) => user.username.toLowerCase() === newUser.username.toLowerCase()
-      )
-    ) {
-      return Alert.alert(`Користувач ${newUser.username} вже існує`);
-    } else if (
-      users.some(
-        (user) => user.email.toLowerCase() === newUser.email.toLowerCase()
-      )
-    ) {
-      return Alert.alert(`Е-мейл ${newUser.email} вже зареєстрован`);
-    }
-    users.push(newUser);
-    navigation.navigate("Home", {
-      screen: "PostsScreen",
-      params: {
-        user: newUser,
-      },
+    // if (
+    //   users.some(
+    //     (user) => user.username.toLowerCase() === newUser.username.toLowerCase()
+    //   )
+    // ) {
+    //   return Alert.alert(`Користувач ${newUser.username} вже існує`);
+    // } else if (
+    //   users.some(
+    //     (user) => user.email.toLowerCase() === newUser.email.toLowerCase()
+    //   )
+    // ) {
+    //   return Alert.alert(`Е-мейл ${newUser.email} вже зареєстрован`);
+    // }
+
+    registerDB({
+      username,
+      email,
+      password,
     });
-    setNewUser({
-      username: "",
-      email: "",
-      password: "",
-      avatar: {
-        uri: "https://raw.githubusercontent.com/alex-neveroff/react-native-hw/main/assets/images/avatar-blanc.jpg",
-      },
-    });
+
+    // navigation.navigate("Home", {
+    //   screen: "PostsScreen",
+    //   params: {
+    //     user: newUser,
+    //   },
+    // });
+
+    setUsername(null);
+    setEmail(null);
+    setPassword(null);
+    setAvatar(null);
   };
 
   return (
@@ -143,7 +117,7 @@ const RegistrationScreen = () => {
           <View style={styles.formContainer}>
             <View style={styles.avatarContainer}>
               <Image
-                source={newUser.avatar}
+                source={avatar ? avatar : AvatarImage}
                 resizeMode="cover"
                 style={styles.avatarImage}
               />
@@ -163,19 +137,20 @@ const RegistrationScreen = () => {
                   isFocused === "inputName" && styles.inputFocused,
                 ]}
                 placeholder="Логін"
-                onChangeText={handleUsernameChange}
-                value={newUser.username}
+                onChangeText={setUsername}
+                value={username}
                 onFocus={() => handleFocus("inputName")}
                 onBlur={handleBlur}
               />
+
               <TextInput
                 style={[
                   styles.input,
                   isFocused === "inputEmail" && styles.inputFocused,
                 ]}
                 placeholder="Адреса електронної пошти"
-                onChangeText={handleEmailChange}
-                value={newUser.email}
+                onChangeText={setEmail}
+                value={email}
                 onFocus={() => handleFocus("inputEmail")}
                 onBlur={handleBlur}
               />
@@ -188,8 +163,8 @@ const RegistrationScreen = () => {
                   ]}
                   placeholder="Пароль"
                   secureTextEntry={!showPassword}
-                  onChangeText={handlePasswordChange}
-                  value={newUser.password}
+                  onChangeText={setPassword}
+                  value={password}
                   onFocus={() => handleFocus("inputPassword")}
                   onBlur={handleBlur}
                 />
@@ -247,7 +222,11 @@ const styles = StyleSheet.create({
     width: 132,
     height: 120,
   },
-  avatarImage: { width: 120, height: 120, borderRadius: 16 },
+  avatarImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 16,
+  },
   addButton: {
     width: 25,
     height: 25,
