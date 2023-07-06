@@ -78,7 +78,6 @@ const RegistrationScreen = () => {
     // }
 
     registerDB({
-      username,
       email,
       password,
     });
