@@ -10,11 +10,9 @@ import {
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
-  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import BackgroundImage from "../assets/images/background.jpg";
-import users from "../users";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState(null);
@@ -36,22 +34,6 @@ const LoginScreen = () => {
   };
 
   const handleLogin = () => {
-    // const existingUser = users.find(
-    //   (user) => user.email.toLowerCase() === currentUser.email.toLowerCase()
-    // );
-    // if (!existingUser) {
-    //   return Alert.alert(`Такого користувача немає. Зареєструйтесь`);
-    // } else if (existingUser && existingUser.password !== currentUser.password) {
-    //   return Alert.alert(`Невірний пароль`);
-    // }
-
-    // navigation.navigate("Home", {
-    //   screen: "PostsScreen",
-    //   params: {
-    //     user: existingUser,
-    //   },
-    // });
-
     loginDB({ email, password });
 
     setEmail(null);

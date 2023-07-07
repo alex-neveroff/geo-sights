@@ -11,7 +11,6 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import * as ImagePicker from "expo-image-picker";
@@ -21,7 +20,7 @@ import AvatarImage from "../assets/images/avatarblanc.jpg";
 import { registerDB } from "../firebase/auth";
 
 const RegistrationScreen = () => {
-  const [username, setUsername] = useState(null);
+  const [userName, setUserName] = useState(null);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [avatar, setAvatar] = useState(null);
@@ -63,33 +62,12 @@ const RegistrationScreen = () => {
   };
 
   const handleRegister = () => {
-    // if (
-    //   users.some(
-    //     (user) => user.username.toLowerCase() === newUser.username.toLowerCase()
-    //   )
-    // ) {
-    //   return Alert.alert(`Користувач ${newUser.username} вже існує`);
-    // } else if (
-    //   users.some(
-    //     (user) => user.email.toLowerCase() === newUser.email.toLowerCase()
-    //   )
-    // ) {
-    //   return Alert.alert(`Е-мейл ${newUser.email} вже зареєстрован`);
-    // }
-
     registerDB({
       email,
       password,
     });
 
-    // navigation.navigate("Home", {
-    //   screen: "PostsScreen",
-    //   params: {
-    //     user: newUser,
-    //   },
-    // });
-
-    setUsername(null);
+    setUserName(null);
     setEmail(null);
     setPassword(null);
     setAvatar(null);
@@ -136,8 +114,8 @@ const RegistrationScreen = () => {
                   isFocused === "inputName" && styles.inputFocused,
                 ]}
                 placeholder="Логін"
-                onChangeText={setUsername}
-                value={username}
+                onChangeText={setUserName}
+                value={userName}
                 onFocus={() => handleFocus("inputName")}
                 onBlur={handleBlur}
               />
