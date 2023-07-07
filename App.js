@@ -7,6 +7,8 @@ import LoginScreen from "./Screens/LoginScreen";
 import Home from "./Screens/Home";
 import MapScreen from "./Screens/MapScreen";
 import CommentsScreen from "./Screens/CommentsScreen";
+import { useSelector } from "react-redux";
+import { selectIsAuth } from "./redux/auth/authSelectors";
 
 const MainStack = createStackNavigator();
 
@@ -24,45 +26,55 @@ export default function App() {
     return null;
   }
 
+  const isAuth = useSelector(selectIsAuth);
+
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <MainStack.Navigator
-          initialRouteName="Login"
-          screenOptions={styles.tabOptions}
-        >
-          <MainStack.Screen
-            name="Registration"
-            component={RegistrationScreen}
-            options={{ headerShown: false }}
-          />
-          <MainStack.Screen
-            name="Login"
-            component={LoginScreen}
-            options={{ headerShown: false }}
-          />
-          <MainStack.Screen
-            name="Home"
-            component={Home}
-            options={{ headerShown: false }}
-          />
-          <MainStack.Screen
-            name="Map"
-            component={MapScreen}
-            options={{
-              headerTitle: () => <Text style={styles.headerTitle}>Мапа</Text>,
-            }}
-          />
-          <MainStack.Screen
-            name="Comments"
-            component={CommentsScreen}
-            options={{
-              headerTitle: () => (
-                <Text style={styles.headerTitle}>Коментарі</Text>
-              ),
-            }}
-          />
-        </MainStack.Navigator>
+        {!isAuth ? (
+          <MainStack.Navigator
+            initialRouteName="Login"
+            screenOptions={styles.tabOptions}
+          >
+            <MainStack.Screen
+              name="Registration"
+              component={RegistrationScreen}
+              options={{ headerShown: false }}
+            />
+            <MainStack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{ headerShown: false }}
+            />
+          </MainStack.Navigator>
+        ) : (
+          <MainStack.Navigator
+            initialRouteName="Home"
+            screenOptions={styles.tabOptions}
+          >
+            <MainStack.Screen
+              name="Home"
+              component={Home}
+              options={{ headerShown: false }}
+            />
+            <MainStack.Screen
+              name="Map"
+              component={MapScreen}
+              options={{
+                headerTitle: () => <Text style={styles.headerTitle}>Мапа</Text>,
+              }}
+            />
+            <MainStack.Screen
+              name="Comments"
+              component={CommentsScreen}
+              options={{
+                headerTitle: () => (
+                  <Text style={styles.headerTitle}>Коментарі</Text>
+                ),
+              }}
+            />
+          </MainStack.Navigator>
+        )}
       </NavigationContainer>
     </Provider>
   );
