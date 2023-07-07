@@ -25,7 +25,7 @@ export default function App() {
   }
 
   return (
-    <>
+    <Provider store={store}>
       <NavigationContainer>
         <MainStack.Navigator
           initialRouteName="Login"
@@ -64,7 +64,7 @@ export default function App() {
           />
         </MainStack.Navigator>
       </NavigationContainer>
-    </>
+    </Provider>
   );
 }
 
