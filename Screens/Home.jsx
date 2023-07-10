@@ -5,12 +5,15 @@ import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import PostsScreen from "./PostsScreen";
 import CreatePostsScreen from "./CreatePostsScreen";
 import ProfileScreen from "./ProfileScreen";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redispatchdux";
+import { userLogout } from "../redux/auth/authOperations";
 
 const Tabs = createBottomTabNavigator();
 
 const Home = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   return (
     <Tabs.Navigator screenOptions={styles.tabOptions}>
@@ -23,7 +26,7 @@ const Home = () => {
           headerRight: () => (
             <TouchableOpacity
               style={styles.logOutButton}
-              onPress={() => navigation.navigate("Login")}
+              onPress={dispatch(userLogout())}
             >
               <Ionicons name="log-out-outline" size={24} color="#BDBDBD" />
             </TouchableOpacity>
@@ -65,7 +68,7 @@ const Home = () => {
           headerRight: () => (
             <TouchableOpacity
               style={styles.logOutButton}
-              onPress={() => navigation.navigate("Login")}
+              onPress={dispatch(userLogout())}
             >
               <Ionicons name="log-out-outline" size={24} color="#BDBDBD" />
             </TouchableOpacity>
