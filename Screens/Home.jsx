@@ -11,7 +11,6 @@ const Tabs = createBottomTabNavigator();
 
 const Home = () => {
   const navigation = useNavigation();
-  const route = useRoute();
 
   return (
     <Tabs.Navigator screenOptions={styles.tabOptions}>
@@ -38,7 +37,6 @@ const Home = () => {
       <Tabs.Screen
         name="CreatePostsScreen"
         component={CreatePostsScreen}
-        initialParams={{ user: route.params.params.user }}
         options={{
           tabBarStyle: { display: "none" },
           headerTitle: () => (
@@ -48,14 +46,7 @@ const Home = () => {
           headerLeft: () => (
             <TouchableOpacity
               style={styles.arrowButton}
-              onPress={() =>
-                navigation.navigate("Home", {
-                  screen: `${route.params.screen}`,
-                  params: {
-                    user: route.params.params.user,
-                  },
-                })
-              }
+              onPress={() => navigation.goBack()}
             >
               <Ionicons name="arrow-back-outline" size={24} color="#212121" />
             </TouchableOpacity>

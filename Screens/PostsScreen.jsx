@@ -9,31 +9,36 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/core";
 import { Ionicons } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import {
+  selectAvatar,
+  selectEmail,
+  selectUserName,
+} from "../redux/auth/authSelectors";
 
 const PostsScreen = () => {
   const navigation = useNavigation();
-  const {
-    params: { user },
-  } = useRoute();
+
+  const avatar = useSelector(selectAvatar);
+  const username = useSelector(selectUserName);
+  const email = useSelector(selectEmail);
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.userContainer}>
-        {user.avatar && (
+        {avatar && (
           <Image
-            source={user.avatar}
+            source={avatar}
             resizeMode="cover"
             style={styles.avatarImage}
           />
         )}
         <View style={styles.userDescription}>
-          {user.username && (
-            <Text style={styles.userName}>{user.username}</Text>
-          )}
-          {user.email && <Text style={styles.userEmail}>{user.email}</Text>}
+          {username && <Text style={styles.userName}>{username}</Text>}
+          {email && <Text style={styles.userEmail}>{email}</Text>}
         </View>
       </View>
-      {user.posts.length > 0 && (
+      {/* {user.posts.length > 0 && (
         <View style={styles.postList}>
           {user.posts.map((post, index) => (
             <View style={styles.post} key={index}>
@@ -85,7 +90,7 @@ const PostsScreen = () => {
             </View>
           ))}
         </View>
-      )}
+      )} */}
     </ScrollView>
   );
 };

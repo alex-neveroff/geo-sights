@@ -13,6 +13,8 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import BackgroundImage from "../assets/images/background.jpg";
+import { userLogin } from "../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState(null);
@@ -20,6 +22,7 @@ const LoginScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -34,10 +37,11 @@ const LoginScreen = () => {
   };
 
   const handleLogin = () => {
-    loginDB({ email, password });
+    if (!email || !password) {
+      return alert("Будь ласка, заповніть усі поля");
+    }
 
-    setEmail(null);
-    setPassword(null);
+    dispatch(userLogin({ email, password }));
   };
 
   return (

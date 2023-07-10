@@ -16,14 +16,12 @@ import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { Ionicons } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
 
 const CreatePostsScreen = () => {
   const navigation = useNavigation();
-  const {
-    params: { user },
-  } = useRoute();
+
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef(null);
   const [isPreviewing, setIsPreviewing] = useState(false);
