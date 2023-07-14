@@ -19,13 +19,14 @@ import BackgroundImage from "../assets/images/background.jpg";
 import AvatarImage from "../assets/images/avatarblanc.jpg";
 import { useDispatch } from "react-redux";
 import { userRegistration } from "../redux/auth/authOperations";
-import * as MediaLibrary from "expo-media-library";
+import { storage } from "../firebase/config";
+import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
 
 const RegistrationScreen = () => {
   const [userName, setUserName] = useState(null);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
-  const [avatar, setAvatar] = useState(AvatarImage);
+  const [avatar, setAvatar] = useState(null);
 
   const [showPassword, setShowPassword] = useState(false);
   const [isFocused, setIsFocused] = useState(null);
@@ -36,11 +37,11 @@ const RegistrationScreen = () => {
     setShowPassword(!showPassword);
   };
 
-  const uploadAvatar = async (avatar, userEmail) => {
+  const uploadAvatar = async (avatar, email) => {
     try {
       const response = await fetch(avatar);
       const file = await response.blob();
-      const storageRef = ref(storage, `userAvatars/${userEmail}`);
+      const storageRef = ref(storage, `userAvatars/${email}`);
       await uploadBytes(storageRef, file);
       const link = await getDownloadURL(storageRef);
       return link;
@@ -52,21 +53,15 @@ const RegistrationScreen = () => {
   const handleAddPhoto = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") return;
-    const options = {
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
-    };
-    const result = await ImagePicker.launchImageLibraryAsync(options);
+    });
 
-    if (!result.canceled) {
-      const selectedAsset = await MediaLibrary.createAssetAsync(
-        result.assets[0].uri
-      );
-      const selectedUri = await MediaLibrary.getAssetInfoAsync(selectedAsset);
-
-      setAvatar(selectedUri.uri);
+    if (result.assets.length > 0) {
+      setAvatar(result.assets[0].uri);
     }
   };
 
@@ -82,9 +77,9 @@ const RegistrationScreen = () => {
     if (!userName || !email || !password) {
       return alert("Будь ласка, заповніть усі поля");
     }
-    const avatarURL = await uploadAvatar(avatar);
-    console.debug(avatar);
-    console.debug(avatarURL);
+    const avatarURL = await uploadAvatar(avatar, email);
+    console.debug("Avatar", avatar);
+    console.debug("Avatar URL", avatarURL);
 
     dispatch(
       userRegistration({
@@ -94,11 +89,6 @@ const RegistrationScreen = () => {
         avatar: avatarURL,
       })
     );
-
-    setUserName(null);
-    setEmail(null);
-    setPassword(null);
-    setAvatar(AvatarImage);
   };
 
   return (
@@ -122,7 +112,13 @@ const RegistrationScreen = () => {
           <View style={styles.formContainer}>
             <View style={styles.avatarContainer}>
               <Image
-                source={avatar}
+                source={
+                  avatar
+                    ? {
+                        uri: avatar,
+                      }
+                    : AvatarImage
+                }
                 resizeMode="cover"
                 style={styles.avatarImage}
               />

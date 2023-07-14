@@ -6,8 +6,8 @@ import PostsScreen from "./PostsScreen";
 import CreatePostsScreen from "./CreatePostsScreen";
 import ProfileScreen from "./ProfileScreen";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redispatchdux";
 import { userLogout } from "../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
 
 const Tabs = createBottomTabNavigator();
 
