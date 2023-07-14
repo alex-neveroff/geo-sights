@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { userRegistration, userLogin, userLogout } from "./authOperations";
 
 const initialState = {
   userId: null,
@@ -7,62 +6,35 @@ const initialState = {
   email: null,
   avatar: null,
   isAuth: false,
-  error: null,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  extraReducers: (builder) => {
-    builder
-      .addCase(userRegistration.pending, (state) => {
-        state.error = null;
-      })
-      .addCase(userRegistration.fulfilled, (state, { payload }) => {
-        const { uid, email, displayName, photoURL } = payload;
-        state.userId = uid;
-        state.userName = displayName;
-        state.email = email;
-        state.avatar = photoURL;
-        state.error = null;
-        state.isAuth = true;
-      })
-      .addCase(userRegistration.rejected, (state, { payload }) => {
-        state.error = payload;
-        state.isAuth = false;
-      })
-      .addCase(userLogin.pending, (state) => {
-        state.error = null;
-      })
-      .addCase(userLogin.fulfilled, (state, { payload }) => {
-        const { email, displayName, storedId, photoURL } = payload;
-        state.userId = storedId;
-        state.userName = displayName;
-        state.email = email;
-        state.avatar = photoURL;
-        state.error = null;
-        state.isAuth = true;
-      })
-      .addCase(userLogin.rejected, (state, { payload }) => {
-        state.error = payload;
-        state.isAuth = false;
-      })
-      .addCase(userLogout.pending, (state) => {
-        state.error = null;
-      })
-      .addCase(userLogout.fulfilled, (state) => {
-        state.userId = null;
-        state.userName = null;
-        state.email = null;
-        state.avatar = null;
-        state.error = null;
-        state.isAuth = false;
-      })
-      .addCase(userLogout.rejected, (state, { payload }) => {
-        state.error = payload;
-        state.isAuth = true;
-      });
+  reducers: {
+    updateUserProfile: (state, { payload }) => ({
+      ...state,
+      userId: payload.userId,
+      userName: payload.userName,
+      email: payload.email,
+      avatar: payload.avatar,
+    }),
+
+    authStateChange: (state, { payload }) => ({
+      ...state,
+      isAuth: payload.isAuth,
+    }),
+    logOut: () => ({
+      userId: null,
+      userName: null,
+      email: null,
+      avatar: null,
+      isAuth: false,
+    }),
   },
 });
+
+export const { updateUserProfile, authStateChange, userLogOut } =
+  authSlice.actions;
 
 export const authReducer = authSlice.reducer;

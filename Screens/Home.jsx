@@ -26,7 +26,9 @@ const Home = () => {
           headerRight: () => (
             <TouchableOpacity
               style={styles.logOutButton}
-              onPress={dispatch(userLogout())}
+              onPress={() => {
+                dispatch(userLogout());
+              }}
             >
               <Ionicons name="log-out-outline" size={24} color="#BDBDBD" />
             </TouchableOpacity>
@@ -68,7 +70,9 @@ const Home = () => {
           headerRight: () => (
             <TouchableOpacity
               style={styles.logOutButton}
-              onPress={dispatch(userLogout())}
+              onPress={() => {
+                dispatch(userLogout());
+              }}
             >
               <Ionicons name="log-out-outline" size={24} color="#BDBDBD" />
             </TouchableOpacity>

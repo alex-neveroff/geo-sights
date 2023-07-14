@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/core";
 import BackgroundImage from "../assets/images/background.jpg";
 import { userLogin } from "../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
+import { authStateChange } from "../redux/auth/authSlice";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState(null);
@@ -41,7 +42,14 @@ const LoginScreen = () => {
       return alert("Будь ласка, заповніть усі поля");
     }
 
-    dispatch(userLogin({ email, password }));
+    dispatch(userLogin({ email, password })).then((data) => {
+      console.debug("User data: ", data);
+      console.debug("Email: ", email);
+      if (data === undefined || !data.user) {
+        return alert(`Користувач не знайдений`);
+      }
+      dispatch(authStateChange({ isAuth: true }));
+    });
   };
 
   return (

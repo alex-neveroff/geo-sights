@@ -21,6 +21,7 @@ import { useDispatch } from "react-redux";
 import { userRegistration } from "../redux/auth/authOperations";
 import { storage } from "../firebase/config";
 import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
+import { authStateChange } from "../redux/auth/authSlice";
 
 const RegistrationScreen = () => {
   const [userName, setUserName] = useState(null);
@@ -78,8 +79,6 @@ const RegistrationScreen = () => {
       return alert("Будь ласка, заповніть усі поля");
     }
     const avatarURL = await uploadAvatar(avatar, email);
-    console.debug("Avatar", avatar);
-    console.debug("Avatar URL", avatarURL);
 
     dispatch(
       userRegistration({
@@ -88,7 +87,13 @@ const RegistrationScreen = () => {
         password,
         avatar: avatarURL,
       })
-    );
+    ).then((data) => {
+      cons;
+      if (data === undefined || !data.uid) {
+        return alert(`Реєстрація не виконана`);
+      }
+      dispatch(authStateChange({ isAuth: true }));
+    });
   };
 
   return (
