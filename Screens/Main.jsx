@@ -8,11 +8,9 @@ import { currentRouter } from "./Routes";
 export default function Main() {
   const isAuth = useSelector(selectIsAuth);
   const dispatch = useDispatch();
-  console.debug("isAuth Main: ", isAuth);
 
   useEffect(() => {
     dispatch(authStateChangeUser());
-    console.debug("isAuth Dispatch: ", isAuth);
   }, []);
 
   const route = currentRouter(isAuth);

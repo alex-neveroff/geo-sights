@@ -9,7 +9,6 @@ import { Text, StyleSheet } from "react-native";
 const MainStack = createStackNavigator();
 
 export const currentRouter = (isAuth) => {
-  console.debug("isAuth Router: ", isAuth);
   if (!isAuth) {
     return (
       <MainStack.Navigator

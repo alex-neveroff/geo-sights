@@ -43,8 +43,6 @@ const LoginScreen = () => {
     }
 
     dispatch(userLogin({ email, password })).then((data) => {
-      console.debug("User data: ", data);
-      console.debug("Email: ", email);
       if (data === undefined || !data.user) {
         return alert(`Користувач не знайдений`);
       }

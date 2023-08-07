@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/core";
+import { useNavigation, useIsFocused } from "@react-navigation/core";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
 import {
@@ -15,46 +15,95 @@ import {
   selectEmail,
   selectUserName,
 } from "../redux/auth/authSelectors";
+import {
+  collection,
+  getDocs,
+  updateDoc,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import { db } from "../firebase/config";
 
 const PostsScreen = () => {
   const navigation = useNavigation();
-
-  const avatar = useSelector(selectAvatar);
+  const isFocused = useIsFocused();
   const username = useSelector(selectUserName);
+  const avatar = useSelector(selectAvatar);
   const email = useSelector(selectEmail);
+
+  const [userPosts, setUserPosts] = useState([]);
+
+  useEffect(() => {
+    if (isFocused) {
+      getPosts();
+    }
+  }, [userPosts]);
+
+  const getPosts = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "posts"));
+      const allPosts = [];
+      snapshot.forEach((doc) =>
+        allPosts.push({ id: doc.id, data: doc.data() })
+      );
+      setUserPosts(allPosts);
+    } catch (error) {
+      console.debug(error.message);
+      alert(`Не вдалося завантажити пости`);
+    }
+  };
+
+  // const onLike = async (postId) => {
+  //   try {
+  //     const postRef = doc(db, "posts", postId);
+  //     const postSnapshot = await getDoc(postRef);
+  //     const postLikes = postSnapshot.data().likes;
+  //     const updatedLikes = Number(postLikes + 1);
+  //     await updateDoc(postRef, {
+  //       likes: updatedLikes,
+  //     });
+  //   } catch (error) {
+  //     console.debug(error.message);
+  //     alert(`Лайк не додано`);
+  //   }
+  // };
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.userContainer}>
         {avatar && (
           <Image
-            source={avatar}
+            source={{
+              uri: avatar,
+            }}
             resizeMode="cover"
             style={styles.avatarImage}
           />
         )}
+
         <View style={styles.userDescription}>
           {username && <Text style={styles.userName}>{username}</Text>}
           {email && <Text style={styles.userEmail}>{email}</Text>}
         </View>
       </View>
-      {/* {user.posts.length > 0 && (
+
+      {userPosts.length > 0 && (
         <View style={styles.postList}>
-          {user.posts.map((post, index) => (
+          {userPosts.map((post, index) => (
             <View style={styles.post} key={index}>
               <Image
-                source={post.photo}
+                source={post.data.photo}
                 resizeMode="cover"
                 style={styles.postImage}
               />
-              <Text style={styles.postTitle}>{post.title}</Text>
+              <Text style={styles.postTitle}>{post.data.title}</Text>
               <View style={styles.postDescription}>
                 <TouchableOpacity
                   onPress={() =>
                     navigation.navigate("Comments", {
-                      comments: post.comments,
-                      photo: post.photo,
-                      user: user,
+                      comments: post.data.comments,
+                      photo: post.data.photo,
+                      user: username,
                     })
                   }
                 >
@@ -72,7 +121,7 @@ const PostsScreen = () => {
                 <TouchableOpacity
                   onPress={() =>
                     navigation.navigate("Map", {
-                      location: post.location,
+                      location: post.data.location,
                     })
                   }
                 >
@@ -84,13 +133,20 @@ const PostsScreen = () => {
                   />
                   <Text
                     style={styles.postArea}
-                  >{`${post.city}, ${post.country}`}</Text>
+                  >{`${post.data.city}, ${post.data.country}`}</Text>
                 </TouchableOpacity>
               </View>
             </View>
           ))}
         </View>
-      )} */}
+      )}
+      {userPosts.length === 0 && (
+        <View style={styles.postList}>
+          <Text style={styles.postDescription}>
+            Ви ще не опублікували жодного фото
+          </Text>
+        </View>
+      )}
     </ScrollView>
   );
 };

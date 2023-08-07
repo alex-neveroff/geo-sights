@@ -49,6 +49,7 @@ export const userLogin =
 export const userLogout = () => async (dispatch) => {
   await signOut(auth);
   dispatch(logOut());
+  return null;
 };
 
 export const authStateChangeUser = () => async (dispatch) => {

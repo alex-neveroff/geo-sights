@@ -18,9 +18,23 @@ import { Ionicons } from "@expo/vector-icons";
 import { TextInput } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
+import { storage, db } from "../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { Timestamp } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
+import { useSelector } from "react-redux";
+
+import {
+  selectAvatar,
+  selectUserId,
+  selectUserName,
+} from "../redux/auth/authSelectors";
 
 const CreatePostsScreen = () => {
   const navigation = useNavigation();
+  const userId = useSelector(selectUserId);
+  const user = useSelector(selectUserName);
+  const avatar = useSelector(selectAvatar);
 
   const [hasPermission, setHasPermission] = useState(null);
   const cameraRef = useRef(null);
@@ -30,7 +44,6 @@ const CreatePostsScreen = () => {
     city: "",
     country: "",
     location: {},
-    comments: [],
     photo: {
       uri: "",
     },
@@ -142,15 +155,50 @@ const CreatePostsScreen = () => {
     }
   };
 
-  const handlePublish = () => {
-    user.posts.push(newPost);
-    navigation.navigate("Home", {
-      screen: "PostsScreen",
-      params: {
-        user: user,
+  const uploadPhotoToServer = async () => {
+    const postId = Date.now().toString();
+    try {
+      const response = await fetch(newPost.photo.uri);
+      const file = await response.blob();
+      const storageRef = ref(storage, `photos/${postId}.jpeg`);
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+      await uploadBytes(storageRef, file, metadata);
+      const photoLink = await getDownloadURL(storageRef);
+      return photoLink;
+    } catch (error) {
+      alert("Фото не завантажилось на сервер");
+    }
+  };
+
+  const handlePublish = async () => {
+    const newPhoto = await uploadPhotoToServer();
+    const uploadPost = {
+      photo: newPhoto,
+      title: newPost.title,
+      location: newPost.location,
+      city: newPost.city,
+      country: newPost.country,
+      createdAt: Timestamp.fromDate(new Date()),
+      updatedAt: Timestamp.fromDate(new Date()),
+      comments: [],
+      likes: 0,
+      owner: {
+        userId,
+        user,
+        avatar,
       },
-    });
-    resetPost();
+    };
+
+    try {
+      await addDoc(collection(db, "posts"), uploadPost);
+      resetPost();
+    } catch (error) {
+      alert("Пост не завантажився на сервер");
+    } finally {
+      navigation.navigate("Home", { screen: "PostsScreen" });
+    }
   };
 
   const resetPost = () => {
