@@ -46,12 +46,6 @@ export const userLogin =
     }
   };
 
-export const userLogout = () => async (dispatch) => {
-  await signOut(auth);
-  dispatch(logOut());
-  return null;
-};
-
 export const authStateChangeUser = () => async (dispatch) => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -66,4 +60,14 @@ export const authStateChangeUser = () => async (dispatch) => {
       dispatch(updateUserProfile(userProfile));
     }
   });
+};
+
+export const userLogout = () => async (dispatch) => {
+  try {
+    await signOut(auth);
+    dispatch(authStateChange({ isAuth: false }));
+    dispatch(logOut());
+  } catch (error) {
+    console.error("Logout error: ", error);
+  }
 };

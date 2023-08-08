@@ -15,6 +15,10 @@ const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
+  const handleLogout = () => {
+    dispatch(userLogout());
+  };
+
   return (
     <Tabs.Navigator screenOptions={styles.tabOptions}>
       <Tabs.Screen
@@ -26,9 +30,7 @@ const Home = () => {
           headerRight: () => (
             <TouchableOpacity
               style={styles.logOutButton}
-              onPress={() => {
-                dispatch(userLogout());
-              }}
+              onPress={handleLogout}
             >
               <Ionicons name="log-out-outline" size={24} color="#BDBDBD" />
             </TouchableOpacity>
@@ -70,9 +72,7 @@ const Home = () => {
           headerRight: () => (
             <TouchableOpacity
               style={styles.logOutButton}
-              onPress={() => {
-                dispatch(userLogout());
-              }}
+              onPress={handleLogout}
             >
               <Ionicons name="log-out-outline" size={24} color="#BDBDBD" />
             </TouchableOpacity>
