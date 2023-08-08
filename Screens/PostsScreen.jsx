@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   Image,
+  FlatList,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
@@ -15,13 +16,7 @@ import {
   selectEmail,
   selectUserName,
 } from "../redux/auth/authSelectors";
-import {
-  collection,
-  getDocs,
-  updateDoc,
-  doc,
-  getDoc,
-} from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 const PostsScreen = () => {
@@ -33,43 +28,31 @@ const PostsScreen = () => {
 
   const [userPosts, setUserPosts] = useState([]);
 
-  useEffect(() => {
-    if (isFocused) {
-      getPosts();
-    }
-  }, [userPosts]);
-
   const getPosts = async () => {
     try {
-      const snapshot = await getDocs(collection(db, "posts"));
-      const allPosts = [];
-      snapshot.forEach((doc) =>
-        allPosts.push({ id: doc.id, data: doc.data() })
-      );
-      setUserPosts(allPosts);
+      onSnapshot(collection(db, "posts"), (data) => {
+        const allPosts = data.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        // console.log("allPosts: ", allPosts.length);
+        setUserPosts(allPosts);
+      });
     } catch (error) {
       console.debug(error.message);
       alert(`Не вдалося завантажити пости`);
     }
   };
 
-  // const onLike = async (postId) => {
-  //   try {
-  //     const postRef = doc(db, "posts", postId);
-  //     const postSnapshot = await getDoc(postRef);
-  //     const postLikes = postSnapshot.data().likes;
-  //     const updatedLikes = Number(postLikes + 1);
-  //     await updateDoc(postRef, {
-  //       likes: updatedLikes,
-  //     });
-  //   } catch (error) {
-  //     console.debug(error.message);
-  //     alert(`Лайк не додано`);
-  //   }
-  // };
+  useEffect(() => {
+    if (isFocused) {
+      getPosts();
+      // console.log("userPosts: ", userPosts);
+    }
+  }, []);
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.userContainer}>
         {avatar && (
           <Image
@@ -86,68 +69,73 @@ const PostsScreen = () => {
           {email && <Text style={styles.userEmail}>{email}</Text>}
         </View>
       </View>
-
-      {userPosts.length > 0 && (
-        <View style={styles.postList}>
-          {userPosts.map((post, index) => (
-            <View style={styles.post} key={index}>
-              <Image
-                source={post.data.photo}
-                resizeMode="cover"
-                style={styles.postImage}
-              />
-              <Text style={styles.postTitle}>{post.data.title}</Text>
-              <View style={styles.postDescription}>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("Comments", {
-                      comments: post.data.comments,
-                      photo: post.data.photo,
-                      user: username,
-                    })
-                  }
-                >
-                  <Ionicons
-                    name="chatbubble-outline"
-                    size={24}
-                    color="#BDBDBD"
-                    style={styles.commentIcon}
-                  />
-                  <Text style={styles.postComments}>
-                    {post.comments.length}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("Map", {
-                      location: post.data.location,
-                    })
-                  }
-                >
-                  <Ionicons
-                    name="location-outline"
-                    size={24}
-                    color="#BDBDBD"
-                    style={styles.areaIcon}
-                  />
-                  <Text
-                    style={styles.postArea}
-                  >{`${post.data.city}, ${post.data.country}`}</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
-        </View>
-      )}
-      {userPosts.length === 0 && (
+      {userPosts.length === 0 ? (
         <View style={styles.postList}>
           <Text style={styles.postDescription}>
-            Ви ще не опублікували жодного фото
+            Ще не опублікувано жодного фото
           </Text>
         </View>
+      ) : (
+        <View style={styles.postList}>
+          <FlatList
+            data={userPosts}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => {
+              return (
+                <View style={styles.post}>
+                  <Image
+                    source={{ uri: item.photo }}
+                    resizeMode="cover"
+                    style={styles.postImage}
+                  />
+                  <Text style={styles.postTitle}>{item.title}</Text>
+                  <View style={styles.postDescription}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("Comments", {
+                          comments: item.comments,
+                          photo: item.photo,
+                          user: item.owner.user,
+                          avatar: item.owner.avatar,
+                        })
+                      }
+                    >
+                      <Ionicons
+                        name="chatbubble-outline"
+                        size={24}
+                        color="#BDBDBD"
+                        style={styles.commentIcon}
+                      />
+                      <Text style={styles.postComments}>
+                        {item.comments.length}
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate("Map", {
+                          location: item.location,
+                        })
+                      }
+                    >
+                      <Ionicons
+                        name="location-outline"
+                        size={24}
+                        color="#BDBDBD"
+                        style={styles.areaIcon}
+                      />
+                      <Text
+                        style={styles.postArea}
+                      >{`${item.city}, ${item.country}`}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              );
+            }}
+          />
+        </View>
       )}
-    </ScrollView>
+    </View>
   );
 };
 
