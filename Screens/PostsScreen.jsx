@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Image,
   FlatList,
-  ScrollView,
   TouchableOpacity,
 } from "react-native";
 import { useNavigation, useIsFocused } from "@react-navigation/core";
@@ -35,7 +34,6 @@ const PostsScreen = () => {
           ...doc.data(),
           id: doc.id,
         }));
-        // console.log("allPosts: ", allPosts.length);
         setUserPosts(allPosts);
       });
     } catch (error) {
@@ -47,7 +45,6 @@ const PostsScreen = () => {
   useEffect(() => {
     if (isFocused) {
       getPosts();
-      // console.log("userPosts: ", userPosts);
     }
   }, []);
 
@@ -76,64 +73,62 @@ const PostsScreen = () => {
           </Text>
         </View>
       ) : (
-        <View style={styles.postList}>
-          <FlatList
-            data={userPosts}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => {
-              return (
-                <View style={styles.post}>
-                  <Image
-                    source={{ uri: item.photo }}
-                    resizeMode="cover"
-                    style={styles.postImage}
-                  />
-                  <Text style={styles.postTitle}>{item.title}</Text>
-                  <View style={styles.postDescription}>
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate("Comments", {
-                          comments: item.comments,
-                          photo: item.photo,
-                          user: item.owner.user,
-                          avatar: item.owner.avatar,
-                        })
-                      }
-                    >
-                      <Ionicons
-                        name="chatbubble-outline"
-                        size={24}
-                        color="#BDBDBD"
-                        style={styles.commentIcon}
-                      />
-                      <Text style={styles.postComments}>
-                        {item.comments.length}
-                      </Text>
-                    </TouchableOpacity>
+        <FlatList
+          data={userPosts}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => {
+            return (
+              <View style={styles.postList}>
+                <Image
+                  source={{ uri: item.photo }}
+                  resizeMode="cover"
+                  style={styles.postImage}
+                />
+                <Text style={styles.postTitle}>{item.title}</Text>
+                <View style={styles.postDescription}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("Comments", {
+                        comments: item.comments,
+                        photo: item.photo,
+                        user: item.owner.user,
+                        postId: item.id,
+                      })
+                    }
+                  >
+                    <Ionicons
+                      name="chatbubble-outline"
+                      size={24}
+                      color="#BDBDBD"
+                      style={styles.commentIcon}
+                    />
+                    <Text style={styles.postComments}>
+                      {item.comments.length}
+                    </Text>
+                  </TouchableOpacity>
 
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate("Map", {
-                          location: item.location,
-                        })
-                      }
-                    >
-                      <Ionicons
-                        name="location-outline"
-                        size={24}
-                        color="#BDBDBD"
-                        style={styles.areaIcon}
-                      />
-                      <Text
-                        style={styles.postArea}
-                      >{`${item.city}, ${item.country}`}</Text>
-                    </TouchableOpacity>
-                  </View>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("Map", {
+                        location: item.location,
+                      })
+                    }
+                  >
+                    <Ionicons
+                      name="location-outline"
+                      size={24}
+                      color="#BDBDBD"
+                      style={styles.areaIcon}
+                    />
+                    <Text
+                      style={styles.postArea}
+                    >{`${item.city}, ${item.country}`}</Text>
+                  </TouchableOpacity>
                 </View>
-              );
-            }}
-          />
-        </View>
+              </View>
+            );
+          }}
+        />
       )}
     </View>
   );
@@ -148,8 +143,8 @@ const styles = StyleSheet.create({
     borderTopColor: "#BDBDBD",
     borderTopWidth: 1,
   },
-  userContainer: { flexDirection: "row", gap: 8 },
-  avatarImage: { width: 120, height: 120, borderRadius: 16 },
+  userContainer: { flexDirection: "row", gap: 8, marginBottom: 32 },
+  avatarImage: { width: 60, height: 60, borderRadius: 16 },
   userDescription: { flex: 1, justifyContent: "center" },
   userName: {
     fontFamily: "Roboto-Bold",
@@ -163,7 +158,7 @@ const styles = StyleSheet.create({
     lineHeight: 13,
     color: "rgba(33, 33, 33, 0.8)",
   },
-  postList: { paddingTop: 32, flex: 1, gap: 32, marginBottom: 32 },
+  postList: { flex: 1, marginBottom: 32 },
   postImage: { width: "100%", height: 240, borderRadius: 8, marginBottom: 8 },
   postTitle: {
     fontFamily: "Roboto-Medium",

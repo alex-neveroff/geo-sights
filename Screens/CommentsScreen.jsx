@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,25 +6,40 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
-  ScrollView,
+  FlatList,
   KeyboardAvoidingView,
   Platform,
-  TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
 import { useRoute } from "@react-navigation/core";
 import { Ionicons } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import { selectAvatar } from "../redux/auth/authSelectors";
+import { updateDoc, doc } from "firebase/firestore";
+import { db } from "../firebase/config";
 
 const CommentsScreen = () => {
+  const avatar = useSelector(selectAvatar);
   const {
-    params: { comments, photo, user },
+    params: { comments, photo, postId },
   } = useRoute();
-
+  const [allComments, setAllComments] = useState([]);
   const [newComment, setNewComment] = useState({
     text: "",
     date: "",
-    userAvatar: user.avatar,
+    userAvatar: avatar,
+    id: postId,
   });
+
+  useEffect(() => {
+    if (comments && comments.length > 0) {
+      setAllComments(comments);
+    }
+  }, [comments]);
+
+  const keyBoardHide = () => {
+    Keyboard.dismiss();
+  };
 
   const handleCommentChange = (text) => {
     dateCommentChange();
@@ -61,9 +76,21 @@ const CommentsScreen = () => {
     }));
   };
 
-  const handlePublishComment = () => {
+  const handlePublishComment = async () => {
     if (newComment.text) {
-      comments.unshift(newComment);
+      keyBoardHide();
+      setAllComments((prevState) => [...prevState, newComment]);
+
+      try {
+        const postRef = doc(db, "posts", postId);
+        await updateDoc(postRef, {
+          comments: [...comments, newComment],
+        });
+      } catch (error) {
+        console.error("Помилка додавання коментаря:", error);
+        alert("Помилка додавання коментаря");
+      }
+
       setNewComment((prevState) => ({
         ...prevState,
         text: "",
@@ -73,52 +100,56 @@ const CommentsScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS == "ios" ? "padding" : "height"}
-      style={styles.container}
-      keyboardVerticalOffset={-140}
-    >
-      <Image source={photo} resizeMode="cover" style={styles.postImage} />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.commentsContainer}>
-          {comments.map((comment, index) => {
-            const isEven = index % 2 === 0;
-            const commentStyle = isEven
-              ? styles.commentEven
-              : styles.commentOdd;
-            return (
-              <View style={[styles.comment, commentStyle]} key={index}>
+    <View style={styles.container}>
+      <Image
+        source={{ uri: photo }}
+        resizeMode="cover"
+        style={styles.postImage}
+      />
+      <FlatList
+        keyExtractor={(item, index) => index.toString()}
+        data={allComments}
+        renderItem={({ item, index }) => {
+          const isEven = index % 2 === 0;
+          const commentStyle = isEven ? styles.commentEven : styles.commentOdd;
+
+          return (
+            <View style={styles.commentsList}>
+              <View style={[styles.comment, commentStyle]}>
                 {isEven ? (
                   <Image
-                    source={comment.userAvatar}
+                    source={{ uri: item.userAvatar }}
                     resizeMode="cover"
                     style={styles.commentAvatar}
                   />
                 ) : null}
                 <View style={styles.commentWrap}>
-                  <Text style={styles.commentText}>{comment.text}</Text>
+                  <Text style={styles.commentText}>{item.text}</Text>
                   <Text
                     style={[
                       styles.commentDate,
                       isEven ? styles.commentDateRight : null,
                     ]}
                   >
-                    {comment.date}
+                    {item.date}
                   </Text>
                 </View>
                 {!isEven ? (
                   <Image
-                    source={comment.userAvatar}
+                    source={{ uri: item.userAvatar }}
                     resizeMode="cover"
                     style={styles.commentAvatar}
                   />
                 ) : null}
               </View>
-            );
-          })}
-        </View>
-      </ScrollView>
-      <View style={styles.commentFooter}>
+            </View>
+          );
+        }}
+      />
+      <KeyboardAvoidingView
+        behavior="position"
+        keyboardVerticalOffset={Platform.OS === "ios" ? -200 : -200}
+      >
         <TextInput
           style={[styles.commentInput]}
           placeholder="Коментувати..."
@@ -134,8 +165,8 @@ const CommentsScreen = () => {
             <Ionicons name="arrow-up-outline" size={24} color="#FFFFFF" />
           </View>
         </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -154,8 +185,11 @@ const styles = StyleSheet.create({
   commentOdd: {
     justifyContent: "flex-start",
   },
-  postImage: { width: "100%", height: 240, borderRadius: 50, marginBottom: 8 },
-  commentsContainer: { paddingTop: 32, paddingBottom: 80, gap: 24 },
+  postImage: { width: "100%", height: 240, borderRadius: 50, marginBottom: 32 },
+  commentsContainer: { paddingBottom: 24 },
+  commentsList: {
+    marginBottom: 24,
+  },
   comment: { flexDirection: "row", gap: 16 },
   commentAvatar: { width: 28, height: 28, borderRadius: 50 },
   commentWrap: {
@@ -194,13 +228,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E8E8E8",
     borderRadius: 100,
-    paddingHorizontal: 16,
+    paddingLeft: 16,
     fontFamily: "Roboto-Medium",
     fontSize: 16,
     lineHeight: 19,
     color: "#BDBDBD",
+    marginBottom: 16,
   },
-  commentButton: { position: "absolute", top: 18, right: 32 },
+
+  commentButton: { position: "absolute", top: 8, right: 8 },
   commentButtonOut: {
     backgroundColor: "#FF6C00",
     width: 34,
