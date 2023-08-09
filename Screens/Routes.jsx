@@ -31,7 +31,7 @@ export const currentRouter = (isAuth) => {
 
   return (
     <MainStack.Navigator
-      initialRouteName="Home"
+      initialRouteName="Login"
       screenOptions={styles.tabOptions}
     >
       <MainStack.Screen

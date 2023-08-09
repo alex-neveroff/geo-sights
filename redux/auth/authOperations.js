@@ -68,6 +68,6 @@ export const userLogout = () => async (dispatch) => {
     dispatch(authStateChange({ isAuth: false }));
     dispatch(logOut());
   } catch (error) {
-    console.error("Logout error: ", error);
+    console.error("Помилка виходу: ", error);
   }
 };
