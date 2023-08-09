@@ -15,7 +15,13 @@ import {
   selectEmail,
   selectUserName,
 } from "../redux/auth/authSelectors";
-import { collection, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../firebase/config";
 
 const PostsScreen = () => {
@@ -35,13 +41,18 @@ const PostsScreen = () => {
 
   const getPosts = async () => {
     try {
-      onSnapshot(collection(db, "posts"), (data) => {
+      const myQuery = query(
+        collection(db, "posts"),
+        orderBy("createdAt", "desc")
+      );
+
+      onSnapshot(myQuery, (data) => {
         const allPosts = data.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id,
         }));
-        const reversPosts = allPosts.reverse();
-        setUserPosts(reversPosts);
+
+        setUserPosts(allPosts);
       });
     } catch (error) {
       console.debug(error.message);

@@ -23,6 +23,8 @@ import {
   updateDoc,
   doc,
   getDoc,
+  query,
+  orderBy,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import BackgroundImage from "../assets/images/background.jpg";
@@ -43,19 +45,20 @@ const ProfileScreen = () => {
 
   const getUserPosts = async () => {
     try {
-      onSnapshot(
+      const myQuery = query(
         collection(db, "posts"),
         where("owner.userId", "==", userId),
-        (data) => {
-          const allPosts = data.docs.map((doc) => ({
-            ...doc.data(),
-            id: doc.id,
-          }));
-
-          const reversPosts = allPosts.reverse();
-          setUserPosts(reversPosts);
-        }
+        orderBy("createdAt", "desc")
       );
+
+      onSnapshot(myQuery, (data) => {
+        const allPosts = data.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+
+        setUserPosts(allPosts);
+      });
     } catch (error) {
       console.debug(error.message);
       alert(`Не вдалося завантажити пости`);
@@ -208,6 +211,7 @@ const styles = StyleSheet.create({
     borderTopStartRadius: 25,
     borderTopEndRadius: 25,
     backgroundColor: "#FFFFFF",
+    height: "100%",
   },
 
   userContainer: { flexDirection: "row", gap: 8, marginBottom: 32 },
