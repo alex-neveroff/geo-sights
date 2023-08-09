@@ -15,7 +15,7 @@ import {
   selectEmail,
   selectUserName,
 } from "../redux/auth/authSelectors";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 const PostsScreen = () => {
@@ -27,6 +27,12 @@ const PostsScreen = () => {
 
   const [userPosts, setUserPosts] = useState([]);
 
+  useEffect(() => {
+    if (isFocused) {
+      getPosts();
+    }
+  }, []);
+
   const getPosts = async () => {
     try {
       onSnapshot(collection(db, "posts"), (data) => {
@@ -34,19 +40,14 @@ const PostsScreen = () => {
           ...doc.data(),
           id: doc.id,
         }));
-        setUserPosts(allPosts);
+        const reversPosts = allPosts.reverse();
+        setUserPosts(reversPosts);
       });
     } catch (error) {
       console.debug(error.message);
       alert(`Не вдалося завантажити пости`);
     }
   };
-
-  useEffect(() => {
-    if (isFocused) {
-      getPosts();
-    }
-  }, []);
 
   return (
     <View style={styles.container}>
@@ -77,6 +78,10 @@ const PostsScreen = () => {
           data={userPosts}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => {
+            const postColor =
+              item.comments.length > 0
+                ? styles.postNoZeroColor
+                : styles.postZeroColor;
             return (
               <View style={styles.postList}>
                 <Image
@@ -97,12 +102,16 @@ const PostsScreen = () => {
                     }
                   >
                     <Ionicons
-                      name="chatbubble-outline"
+                      name={
+                        item.comments.length > 0
+                          ? "chatbubble-sharp"
+                          : "chatbubble-outline"
+                      }
                       size={24}
-                      color="#BDBDBD"
+                      color={item.comments.length > 0 ? "#FF6C00" : "#BDBDBD"}
                       style={styles.commentIcon}
                     />
-                    <Text style={styles.postComments}>
+                    <Text style={[styles.postComments, postColor]}>
                       {item.comments.length}
                     </Text>
                   </TouchableOpacity>
@@ -172,10 +181,12 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Regular",
     fontSize: 16,
     lineHeight: 19,
-    color: "#BDBDBD",
+
     marginBottom: 8,
     paddingLeft: 30,
   },
+  postZeroColor: { color: "#BDBDBD" },
+  postNoZeroColor: { color: "#212121" },
   postArea: {
     fontFamily: "Roboto-Regular",
     fontSize: 16,
