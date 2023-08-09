@@ -15,17 +15,22 @@ export const userRegistration =
       await createUserWithEmailAndPassword(auth, email, password);
 
       const user = auth.currentUser;
-      const { displayName, uid, photoURL } = auth.currentUser;
 
       await updateProfile(user, {
         displayName: userName,
         photoURL: avatar,
       });
+      const {
+        uid,
+        displayName,
+        email: emailBase,
+        photoURL,
+      } = await auth.currentUser;
 
       const userProfile = {
         userId: uid,
         userName: displayName,
-        userEmail: email,
+        email: emailBase,
         avatar: photoURL,
       };
 

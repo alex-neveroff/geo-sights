@@ -78,6 +78,9 @@ const RegistrationScreen = () => {
     if (!userName || !email || !password) {
       return alert("Будь ласка, заповніть усі поля");
     }
+    if (!avatar) {
+      return alert("Будь ласка, завантажте аватар");
+    }
     const avatarURL = await uploadAvatar(avatar, email);
 
     dispatch(
@@ -88,7 +91,6 @@ const RegistrationScreen = () => {
         avatar: avatarURL,
       })
     ).then((data) => {
-      cons;
       if (data === undefined || !data.uid) {
         return alert(`Реєстрація не виконана`);
       }
