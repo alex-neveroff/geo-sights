@@ -6,3 +6,4 @@ First application on React Native
 4. Screen navigation. Bottom navigation
 5. Screens: Posts, Create Posts, Comments and Map. Camera and geolocation added.
 6. Screen: Profile. Redux and Firebase added. Authorization through Persist.
+7. Build on https://expo.dev/
